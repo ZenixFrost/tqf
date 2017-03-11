@@ -1,0 +1,473 @@
+<script>
+    $(document).ready(function () {
+        moment.locale('th');
+        getCurYear();
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+"</h3>");
+        $("#showDetailMajor").append("<h3>สาขา : "+user.major_id+"</h3>");
+    });
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                yearId = response;
+                $("#showYear").html(yearId);
+                getTqf36DeadlineData();
+                getMajorTqf36DeadlineData();
+            }
+        });
+    }
+
+    var tqf36DeadlineData;
+    var majorTqf36DeadlineData;
+
+    var $tqf36DeadlineTable = $("#tqf36DeadlineTable");
+    var $majorTqf36DeadlineTable = $("#majorTqf36DeadlineTable");
+
+    //ที่กดแก้ไขวันที่ (icon)
+    var edit = '<a href="" class="pull-right editDate"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>';
+
+
+    //-------------------------------------------------Tqf 3-6--------------------------------------------------------------
+
+    //ข้อมูล กำหนดส่ง มคอ. 3 - 6 ของคณะ
+    function getTqf36DeadlineData(){
+        $.ajax({
+            type: 'POST',
+            url: 'tqfDeadlineDAO.php',
+            data: {func: 'getTqf36Deadline', year: yearId, faculty_id: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                tqf36DeadlineData = response;
+                Tqf36DeadlineTable();
+            }
+        });
+    }
+    //Table ข้อมูล กำหนดส่ง มคอ. 3 - 6 ของคณะ
+    function Tqf36DeadlineTable(){
+        $tqf36DeadlineTable.bootstrapTable({
+            columns: [{
+                field: 'term',
+                title: 'ภาคเรียน',
+                align: 'center',
+                width: '1%',
+                formatter: termFormatter
+            }, {
+                field: 'tqf3-4_deadline',
+                title: 'วันส่ง มคอ. 3 - 4',
+                width: '35%',
+                formatter: tqf34DeadlineFormatter
+
+            }, {
+                field: 'tqf5-6_deadline',
+                title: 'วันส่ง มคอ. 5 - 6',
+                width: '35%',
+                formatter: tqf56DeadlineFormatter
+            }
+            ]
+
+        });
+        $tqf36DeadlineTable.bootstrapTable('load', tqf36DeadlineData);
+    }
+
+    function tqf34DeadlineFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('DD/MM/YYYY');
+        if(user.faculty_admin == 1){
+            return ['<span class="dateDate" major="null" field="tqf3-4_deadline" term='+row["term"]+' tabindex='+index+'>'+val+'</span>',edit].join('');
+
+        }else{
+            return ['<span class="dateDate" major="null" field="tqf3-4_deadline" term='+row["term"]+' tabindex='+index+'>'+val+'</span>'].join('');
+
+        }
+    }
+
+    function tqf56DeadlineFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('DD/MM/YYYY');
+
+        if(user.faculty_admin == 1){
+            return ['<span class="dateDate" major="null" field="tqf5-6_deadline" term='+row["term"]+' tabindex='+index+'>'+val+'</span>',edit].join('');
+        }else{
+            return ['<span class="dateDate" major="null" field="tqf5-6_deadline" term='+row["term"]+' tabindex='+index+'>'+val+'</span>'].join('');
+
+        }
+    }
+
+
+    //-----------------------------------------------major Tqf 3-6-------------------------------------------------------
+
+    //ข้อมูล กำหนดส่ง มคอ. 3 - 6 ของสาขา
+    function getMajorTqf36DeadlineData(){
+        $.ajax({
+            type: 'POST',
+            url: 'tqfDeadlineDAO.php',
+            data: {func: 'getMajorTqf36Deadline', year: yearId, major_id: user.major_id , faculty_admin: user.faculty_admin ,faculty_id:user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                majorTqf36DeadlineData = response;
+                majorTqf36DeadlineTable();
+            }
+        });
+    }
+    //Table ข้อมูล กำหนดส่ง มคอ. 3 - 6 ของสาขา
+    function majorTqf36DeadlineTable(){
+        $majorTqf36DeadlineTable.bootstrapTable({
+            columns: [{
+                title: 'ลำดับ',
+                width: '1%',
+                formatter: function (value, row, index) {
+                    return [index+1].join('  ');
+                },
+                align: 'center'
+            }, {
+                field: 'sector_id',
+                title: 'ภาควิชา',
+                width: '20%',
+                formatter: sectorFormatter
+            },{
+                field: 'major_id',
+                title: 'สาขาวิชา',
+                width: '20%',
+                formatter: majorFormatter
+
+            },{
+                field: 'term',
+                title: 'ภาคเรียน',
+                align: 'center',
+                width: '1%',
+                formatter: termFormatter
+
+            }, {
+                field: 'tqf3-4_major_deadline',
+                title: 'วันส่ง มคอ. 3 - 4',
+                width: '25%',
+                formatter: majorTqf34DeadlineFormatter
+
+            }, {
+                field: 'tqf5-6_major_deadline',
+                title: 'วันส่ง มคอ. 5 - 6',
+                width: '25%',
+                formatter: majorTqf56DeadlineFormatter
+            }
+            ]
+
+        });
+        $majorTqf36DeadlineTable.bootstrapTable('load', majorTqf36DeadlineData);
+    }
+
+    function majorTqf34DeadlineFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('DD/MM/YYYY');
+        return ['<span class="dateDate" major='+row["major_id"]+' field="tqf3-4_major_deadline" term='+row["term"]+' tabindex='+index+'>'+val+'</span>',edit].join('');
+    }
+
+    function majorTqf56DeadlineFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('DD/MM/YYYY');
+        return ['<span class="dateDate" major='+row["major_id"]+' field="tqf5-6_major_deadline" term='+row["term"]+' tabindex='+index+'>'+val+'</span>',edit].join('');
+    }
+
+    //------------------------------------------------------------------------------------------------------------------
+
+    var term;
+    var sector;
+    var major;
+
+    //format ของภาควิชา term ที่จะโชว์แค่อันแรก
+    function termFormatter(value, row, index) {
+        var val;
+
+
+        val = value+"/"+row["year"];
+
+
+        term = value;
+        return [val].join('');
+    }
+
+    //format ของภาควิชา sector ที่จะโชว์แค่อันแรก
+    function sectorFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && sector == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        sector = value;
+        return [ val ].join('');
+
+    }
+
+    //format ของสาขาวิชา major ที่จะโชว์แค่อันแรก
+    function majorFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && major == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        major = value;
+        return [ val ].join('');
+
+    }
+
+    var $table = $("#tqf36DeadlineTable , #majorTqf36DeadlineTable");
+
+    //ข้อมูลเก่า
+    var oldElem;
+    var oldDataDate;
+    var oldTabIndex;
+    var oldField;
+    var oldTermId;
+    var oldMajorId;
+
+    //ข้อมูลปัจจุบัน
+    var elem;
+    var dataDate;
+    var tabIndex;
+    var field;
+    var termId;
+    var majorId;
+
+    var dateId;
+
+    //กดแก้ไข้เวลาตรง table
+    $table.on('click',".editDate",function () {
+        elem = $(this).parent();
+
+        dataDate = $(".dateDate" , $(this).parent()).text();
+        tabIndex = $(".dateDate" , $(this).parent()).attr('tabindex');
+        field = $(".dateDate" , $(this).parent()).attr('field');
+        termId = $(".dateDate" , $(this).parent()).attr('term');
+        majorId = $(".dateDate" , $(this).parent()).attr('major');
+
+
+        dateId = "dateIndex"+tabIndex;
+
+
+        var date = "<div class=\"form-inline\">" +
+
+                    "<div class=\"form-group\">" +
+
+                        "<div class=\"input-group col-sm-7\">" +
+                            "<input type=\"text\" name=\"holiday\" id="+dateId+" class=\"form-control\" required=\"required\" >" +
+                            "<span class=\"input-group-addon\">" +
+                                "<i class=\"glyphicon glyphicon-th\"></i>" +
+                            "</span>" +
+                        "</div>"+
+
+                        "<div class=\"form-group pull-right\">" +
+                            "<button type='button' class='btn btn-success submit'><span class='glyphicon glyphicon-ok' aria-hidden='true'></span></button> "+
+                            "<button type='button' class='btn btn-danger cancel'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>"+
+                        "</div>"+
+
+                    "</div>"+
+
+                "</div>";
+
+        if(oldDataDate != null){
+            oldElem.html('<span class="dateDate" major='+oldMajorId+' field='+oldField+' term='+oldTermId+' tabindex='+oldTabIndex+'>'+oldDataDate+'</span>'+edit);
+            elem.removeClass("has-error");
+        }
+
+        oldTabIndex = tabIndex;
+        oldElem  = $(this).parent();
+        oldDataDate = dataDate;
+        oldField = field;
+        oldTermId = termId;
+        oldMajorId = majorId;
+
+        elem.html(date).hide().fadeIn('fast');
+        getDateEditing(dateId,dataDate);
+        return false;
+
+    });
+
+    //กดยกเลิกแก้ไขเวลา ตรง table
+    $table.on('click',".cancel",function () {
+        oldElem = null;
+        oldDataDate = null;
+        oldTabIndex = null;
+        oldField = null;
+        oldTermId = null;
+        elem.html('<span class="dateDate" major='+majorId+' field='+field+' term='+termId+' tabindex='+tabIndex+'>'+dataDate+'</span>'+edit).hide().fadeIn('fast');
+        elem.removeClass("has-error");
+    });
+
+    //กดตกลงเพื่อแก้ไขข้อมูลเวลาใน db
+    $table.on('click',".submit",function () {
+        var newDateData = $("#"+dateId).val();
+
+        if(newDateData == dataDate){
+            oldElem = null;
+            oldDataDate = null;
+            oldTabIndex = null;
+            oldField = null;
+            oldTermId = null;
+            elem.html('<span class="dateDate" major='+majorId+' field='+field+' term='+termId+' tabindex='+tabIndex+'>'+dataDate+'</span>'+edit).hide().fadeIn('fast');
+        }else{
+            var $alertId = $("#"+dateId);
+
+            $.ajax({
+                type: 'POST',
+                url: 'tqfDeadlineDAO.php',
+                data: {
+                    func: 'updateTqfDeadline' ,
+                    year: yearId,
+                    term: termId ,
+                    name: field,
+                    value:newDateData ,
+                    faculty_id: user.faculty_id,
+                    major_id: majorId
+                },
+                success: function () {
+                    getTqf36DeadlineData();
+                    getMajorTqf36DeadlineData();
+                },
+                error: function (response) {
+
+                    elem.addClass("has-error");
+                    $alertId.popover({
+                        trigger: 'manual',
+                        container: 'body',
+                        placement: 'top'
+                    });
+
+                    $alertId.data('bs.popover').options.content = response.responseText;
+                    $alertId.popover('show');
+                    setTimeout(function () {
+                        $(".popover").popover('hide');
+                    },1500);
+
+                }
+            });
+        }
+    });
+
+
+    //โชว์วันที่ตอนแก้ไข table
+    function getDateEditing(dateId,dataDate){
+        var showDate = moment(dataDate, "DD/MM/YYYY").subtract(543,'years').format('DD/MM/YYYY');
+
+        $("#"+dateId).datepicker({
+            format: 'dd/mm/yyyy',
+            todayBtn: true,
+            todayHighlight: true,
+            autoclose: true,
+            orientation :  "bottom",
+            language: 'th',             //เปลี่ยน label ต่างของ ปฏิทิน ให้เป็น ภาษาไทย   (ต้องใช้ไฟล์ bootstrap-datepicker.th.min.js นี้ด้วย)
+            thaiyear: true              //Set เป็นปี พ.ศ.
+        }).datepicker("setDate", showDate);  //กำหนดเป็นวันปัจุบัน
+    }
+
+
+    $("#old").on('click',function () {
+        yearId--;
+        $("#showYear").html(yearId);
+        getTqf36DeadlineData();
+        getMajorTqf36DeadlineData();
+    });
+
+    $("#new").on('click',function () {
+        yearId++;
+        $("#showYear").html(yearId);
+        getTqf36DeadlineData();
+        getMajorTqf36DeadlineData();
+    });
+
+    $("#showYear").on('click',function () {
+        getTqf36DeadlineData();
+        getMajorTqf36DeadlineData();
+    });
+
+</script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-calendar right-5" aria-hidden="true"></i> วันส่ง มคอ.3 - มคอ.6</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">กำหนดวันส่ง มคอ.</li>
+                <li class="active">วันส่ง มคอ. 3-6</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-15">
+            <h4>
+                ปีการศึกษา :
+                <div class="btn-group" role="group">
+                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+                    <button type="button" id="showYear" class="btn btn-default"></button>
+
+                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                </div>
+            </h4>
+        </div>
+    </div>
+
+    <!--วันส่ง มคอ. ของคณะ-->
+
+
+    <div class="row">
+        <div class="col-md-12 top-10">
+            <h4>วันส่ง มคอ.3 - มคอ.6  &nbsp;(คณะ)</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-8 col-xl-6 col-xxl-5 top-10">
+            <table id="tqf36DeadlineTable">
+
+            </table>
+        </div>
+    </div>
+
+
+    <hr class="top-40">
+
+    <!--วันส่ง มคอ. ของสาขา-->
+
+    <div class="row">
+        <div class="col-md-12 top-10">
+            <h4>วันส่ง มคอ.3 - มคอ.6 	&nbsp;(สาขา)</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-xl-11 col-xxl-9">
+            <table id="majorTqf36DeadlineTable"
+                   data-pagination="true"
+                   data-show-pagination-switch="true"
+                   data-page-size="10"
+                   data-page-list="[10, 30, 50, 100]"
+            >
+
+            </table>
+        </div>
+    </div>
+
+    <div class="top-30"></div>
+
+
+</div>

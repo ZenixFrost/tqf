@@ -1,0 +1,584 @@
+<style>
+    .selectWidth {
+        width: 350px;
+    }
+
+
+    #selectMajor .form-control-feedback {
+        /* Adjust feedback icon position */
+        right: 18px;
+    }
+
+</style>
+<script>
+
+    $(document).ready(function () {
+        getSelectMajor();  //Select major ตอนแก้ไขใน table
+        getSelect();   // Select major ตอน add user
+        getUserId();
+        checkRemoveData();
+        $("#showDetail").append("<h3>คณะ : " + user.faculty_id + "</h3>");
+    });
+
+
+    //    $(function () {
+    //        $('html').on('click', function () {
+    //$.fn.editable.defaults.mode = 'inline';
+    //            $('.update').editable({
+    //                url: 'userUpdate.php',
+    //                type: 'text',
+    //                title: 'Enter username'
+    //            });
+    //        });
+    //    })
+
+    ///////////////////////////////////////////////USER TABLE////////////////////////////////////////////////////////////////
+
+    var $table = $('#table');
+    var majors;
+    var userData;
+
+
+    // Select major ตอน add user
+    function getSelect() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getSelect', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                var select = "";
+                $.each(response, function (i, sector) {
+                    select += "<optgroup label=" + sector.sector_id + ">";
+//                    console.log(sector.sector_id);
+                    if (Array.isArray(sector.major_id) == true) {              //ถ้า major_id เป็น array จะเข้าไปวนจนครบจำนวน index
+                        $.each(sector.major_id, function (j, major) {
+//                            console.log(major);
+                            select += " <option value=" + major + ">" + major + "</option>";
+                        });
+                    } else {                                                  //ถ้าไม่เป็นหรือภาควิชามีแค่สาขาเดียว
+
+                        select += "<option value=" + sector.major_id + ">" + sector.major_id + "</option>";
+                    }
+                    select += "</optgroup>";
+                });
+//                console.log(select);
+                $("#select").html(select);
+                $("#select").selectpicker('refresh');
+            }
+        });
+    }
+
+    //data Select major ตอน edit user
+    function getSelectMajor() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getSelectMajor', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                majors = response;
+                getUser();
+            }
+        });
+    }
+
+    //get user data
+    function getUser() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getUser', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                userData = response;
+
+                userTable();
+                //                $.each(response, function (i, user) {
+//                    body += "<tr>" +
+//                            "<td>" + (i + 1) + "</td>" +
+//                            "<td><a href='#' class='update' data-name='name' data-pk=" + user.user_id + ">" + user.name + "</a></td>" +
+//                            "<td><a href='#' class='update' data-name='surname' data-pk=" + user.user_id + ">" + user.surname + "</a></td>" +
+//                            "<td><a href='#' class='update' data-name='user_id' data-pk=" + user.user_id + ">" + user.user_id + "</a></td>" +
+//                            "</tr>";
+//                });
+//                $("tbody").html(body);
+//
+//                $('#table').bootstrapTable();
+//                $.fn.editable.defaults.mode = 'inline';
+//                $('.update').editable({
+//                    url: 'userUpdate.php',
+//                    type: 'text',
+//                    title: 'Enter username'
+//                });
+            },
+            error: function () {
+                alert("Don't have any data.");
+            }
+        });
+    }
+
+    //user table
+    function userTable() {
+        $table.bootstrapTable({
+            columns: [{
+                field: 'state',
+                checkbox: true
+            }, {
+                title: 'ลำดับ',
+                width: '1%',
+                formatter: function (value, row, index) {
+                    return [index + 1].join('  ');
+                },
+                align: 'center'
+            }, {
+                field: 'name',
+                title: 'ชื่อ',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'กรอกชื่อ',
+                    url: 'userDAO.php',
+                    name: 'name',
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        return params;
+                    },
+                    success: function () {
+                        getUser();
+                    }
+                }
+            }, {
+                field: 'surname',
+                title: 'นามสกุล',
+                sortable: true,
+                //width: '300px',
+                editable: {
+                    type: 'text',
+                    title: 'กรอกนามสกุล',
+                    url: 'userDAO.php',
+                    name: 'surname',
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        return params;
+                    },
+                    success: function () {
+                        getUser();
+                    }
+                }
+            }, {
+                field: 'user_id',
+                title: 'อีเมล',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'กรอกอีเมล',
+                    url: 'userDAO.php',
+                    name: 'user_id',
+                    params: function func(params) {
+                        params.func = 'updateUser';  //เพิ่ม params func เข้าไป
+                        return params;
+                    },
+                    success: function () {
+                        getUser();
+                    }
+                }
+            }, {
+                field: 'sector_id',
+                title: 'ภาควิชา',
+                sortable: true
+            }, {
+                field: 'major_id',
+                title: 'สาขาวิชา',
+                sortable: true,
+                editable: {
+                    type: 'select2',
+                    title: 'เลือกสาขา',
+                    url: 'userDAO.php',
+                    name: 'major_id',
+                    inputclass: 'selectWidth',
+                    source: majors,
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        params.majorIdAdmin = user.major_id; //major_id ของ admin
+                        return params;
+                    },
+                    success: function () {
+                        getUser();
+                    }
+                }
+            }, {
+                field: 'major_admin',
+                title: 'ผู้ดูแลระบบของสาขา',
+                width: "10%",
+                align: 'center',
+                cellStyle: function cellStyle(value, row, index, field) {
+                    return {
+                        css: {"font-size": "150%"}
+                    };
+                },
+                sortable: true,
+                editable: {
+                    type: 'select',
+                    title: 'เลือกสถานะ',
+                    url: 'userDAO.php',
+                    name: 'major_admin',
+
+                    source: [
+                        {value: 1, text: '✔'},
+                        {value: 0, text: '-'}
+                    ],
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        return params;
+                    },
+                    success: function () {
+                        getUser();
+                    }
+                }
+            }]
+//            data: userData
+        });
+        $table.bootstrapTable('load', userData);
+    }
+
+    //add user
+    //    $(document).ready(function () {
+    //        $("#addUser").submit(function () {
+    ////            var data = $(this).serialize() + '&' + $.param({func: 'addUser', majorId: user.major_id});
+    //            var data = $(this).serialize() + '&' + $.param({func: 'addUser'});
+    ////            console.log(data);
+    ////            $.post("userDAO.php", data, function () {
+    ////                getUser();
+    ////            });
+    //
+    //            $.ajax({
+    //                type: 'POST',
+    //                url: 'userDAO.php',
+    //                data: data,
+    //                dataType: 'html',
+    //                success: function (response) {
+    ////                    console.log(response);
+    //                    if (response == "success") {
+    //                        getUser();
+    //                    } else {
+    //                        var error = "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11 top-15\" role=\"alert\">" +
+    //                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+    //                                "<span aria-hidden=\"true\">&times;</span>" +
+    //                                "</button>" +
+    //                                "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+    //                                "<strong>Error!</strong> " + response +
+    //                                "</div>";
+    //
+    //                        $("#error").append(error);
+    //                    }
+    //                }
+    //            });
+    //            return false;
+    //        });
+    //    });
+
+    var $remove = $('#remove');
+
+    //remove user
+    $(document).ready(function () {
+        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        });
+//        $remove.click(function () {
+//            var data = $table.bootstrapTable('getSelections');
+//            $.ajax({
+//                type: 'POST',
+//                url: 'userDAO.php',
+//                data: {func: 'removeUser', data: data},
+//                success: function () {
+//                    getUser();
+//                    getUserId();
+//                }
+//            });
+//            $remove.prop('disabled', true);
+//        });
+    });
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    var userIdData;
+
+    //จะทำการ get user_id (email) มาทั้งหมดเพื่อทำการตรวจสอบ
+    function getUserId() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getUserId'},
+            dataType: 'json',
+            success: function (response) {
+                userIdData = response;
+            }
+        });
+    }
+
+    //ตรวจสอบข้อมูลก่อน submit เป็นช่องว่างหรือว่า email ซ้ำไหม
+    $(document).ready(function () {
+        $('#addUser').formValidation({
+            framework: 'bootstrap',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            locale: 'th_TH',
+            fields: {
+                user_id: {
+                    validators: {
+                        callback: {
+                            message: 'อีเมลนี้มีผู้ใช้แล้ว',
+                            callback: function (value, validator, $field) {
+
+                                //เช็คว่า email ซ้ำไหม
+                                var checkUser = true;
+                                // Determine the numbers which are generated in captchaOperation
+                                $.each(userIdData, function (i, user) {
+                                    if (user.user_id == value) {
+                                        checkUser = false;
+                                    }
+                                });
+
+                                return checkUser;
+
+                            }
+                        }
+                    }
+                },
+                selected: {
+                    validators: {
+                        callback: {
+                            message: 'กรุณาเลือกสาขา',
+                            callback: function (value, validator, $field) {
+
+                                var checkSelected = true;
+                                // Determine the numbers which are generated in captchaOperation
+
+                                console.log(value);
+                                if (value == "") {
+                                    checkSelected = false;
+                                    return checkSelected;
+                                } else {
+                                    return checkSelected;
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }).on('success.form.fv', function (e) {
+            // Prevent form submission
+            e.preventDefault();
+
+            // Some instances you can use are
+            var $form = $(e.target),        // The form instance
+                    fv = $(e.target).data('formValidation'); // FormValidation instance
+
+            var data = $(this).serialize() + '&' + $.param({func: 'addUser'});
+            var name = $("#name").val();
+            var surname = $("#surname").val();
+
+            $.ajax({
+                type: 'POST',
+                url: 'userDAO.php',
+                data: data,
+                dataType: 'html',
+                success: function (response) {
+                    if (response == "success") {
+
+                        var status = "<div class=\"alert alert-success alert-dismissible col-xs-9\" role=\"alert\">"+
+                                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>"+
+                                        "คุณได้เพิ่มบัญชีของ <strong>"+name+" "+surname+"</strong> เรียบร้อยแล้ว"+
+                                    "</div>";
+                        $("#userStatus").html(status);
+                        getUser();
+                    }
+                }
+            });
+            $('#addUser').bootstrapValidator('resetForm', true);
+            $("#select").selectpicker('refresh');
+            getUserId();
+        });
+    });
+
+    //ฟังก์ชั่น เช็คลบข้อมูล
+    function checkRemoveData() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบข้อมูล",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้",
+            popout: true,
+            singleton: true,
+            container: 'body',
+            onConfirm: function () {
+                var data = $table.bootstrapTable('getSelections');
+                $.ajax({
+                    type: 'POST',
+                    url: 'userDAO.php',
+                    data: {func: 'removeUser', data: data},
+                    success: function () {
+                        getUser();
+                        getUserId();
+                    }
+                });
+                $remove.prop('disabled', true);
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+</script>
+
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="fa fa-user-plus" aria-hidden="true"></i> บัญชีผู้ใช้
+            <small>(ผู้ดูแลระบบของคณะ)</small>
+        </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ตั้งค่าบัญชีผู้ใช้ (Admin คณะ)</li>
+                <li class="active">บัญชีผู้ใช้</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="panel panel-default top-20">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                   aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fa fa-plus" aria-hidden="true"></i> <strong>เพิ่มบัญชี</strong>
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+                <form class="form-inline top-10" id="addUser">
+
+                    <!--ชื่อ-->
+                    <div class="form-group">
+                        <label class="top-5" for="name">ชื่อ : </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="name" id="name" placeholder=""
+                               required="required">
+
+                    </div>
+
+                    <!--นามสกุล-->
+                    <div class="form-group">
+                        <label class="top-5 left-20" for="surname">นามสกุล : </label>
+                    </div>
+                    <div class="form-group ">
+                        <input type="text" class="form-control" name="surname" id="surname" placeholder=""
+                               required="required">
+                    </div>
+
+
+                    <!--อีเมล-->
+                    <div class="form-group">
+                        <label class="top-5 left-20" for="user_id">อีเมล : </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="user_id" id="user_id"
+                               placeholder="example@gmail.com"
+                               required="required" style="width: 250px">
+                    </div>
+
+
+                    <!--สาขา-->
+                    <div class="form-group">
+                        <label class="top-5 left-20" for="select">สาขา : </label>
+                    </div>
+                    <div class="form-group selectedMajor" id="selectMajor">
+                        <select class="selectpicker" name="selected" data-live-search="true" id="select"
+                                title="เลือกสาขา">
+
+                        </select>
+                    </div>
+
+
+                    <div class="form-group left-20 top-5">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" name="major_admin" value="1"> ผู้ดูแลระบบของสาขา
+                        </label>
+                    </div>
+
+                    <hr>
+
+                    <div id="userStatus">
+
+                    </div>
+
+                    <button type="submit" id="submitData" class="btn btn-primary pull-right">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> บันทึกข้อมูล
+                    </button>
+
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div id="toolbar">
+                <button id="remove" class="btn btn-danger" data-toggle="confirmation" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> ลบข้อมูล
+                </button>
+            </div>
+
+            <table id="table"
+                   data-id-field="user_id"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-pagination-switch="true"
+                   data-toolbar="#toolbar"
+                   data-show-columns="true"
+                   data-page-size="15"
+                   data-page-list="[15, 30, 50, 100]"
+            >
+
+            </table>
+        </div>
+    </div>
+
+
+</div>

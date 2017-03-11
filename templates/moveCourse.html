@@ -1,0 +1,171 @@
+<style>
+    .selectWidth {
+        width: 300px;
+    }
+
+</style>
+
+<script>
+    var $table = $("#table");
+    var courseData;
+    var sectorSelectData;
+    var majorSelectData;
+
+    $(function () {
+        getCourseData();
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+"</h3>");
+    });
+
+    //ข้อมูล json ภาควิชา สาขา หลักสูตร ที่จะใส่ใน Table
+    function getCourseData() {
+        $.ajax({
+            type: 'POST',
+            url: 'courseDAO.php',
+            data: {func: 'getTableData', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                courseData = response;
+                getMajorSelectData();
+            }
+        });
+    }
+
+    //ข้อมูล major_id ตอน edit table select major
+    function getMajorSelectData() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getSelectMajor', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                majorSelectData = response;
+                getSectorSelectData();
+            }
+        });
+    }
+
+    //ข้อมูล sector_id ตอน edit table select sector
+    function getSectorSelectData() {
+        $.ajax({
+            type: 'POST',
+            url: 'courseDAO.php',
+            data: {func: 'getSectorSelect', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                sectorSelectData = response;
+                courseTable();
+            }
+        });
+    }
+
+    //Table หลักสูตร
+    function courseTable() {
+        $table.bootstrapTable({
+            columns: [{
+                title: 'ลำดับ',
+                formatter: function (value, row, index) {
+                    return [index+1].join('  ');
+                },
+                width: '1%',
+                align: 'center'
+
+            }, {
+                field: 'sector_id',
+                title: 'ภาควิชา',
+                sortable: true,
+                editable: {
+                    type: 'select2',
+                    title: 'เลือกภาควิชา',
+                    url: 'courseDAO.php',
+                    inputclass: 'selectWidth',
+                    send: 'always',
+                    source: function () {
+                        return sectorSelectData;
+                    },
+                    params: function (params) {
+                        params.func = 'updateSector';
+                        return params;
+                    },
+                    success: function () {
+                        getCourseData();
+                    }
+
+                }
+            }, {
+                field: 'major_id',
+                title: 'สาขาวิชา',
+                sortable: true,
+                editable: {
+                    type: 'select2',
+                    title: 'เลือกสาขาวิชา',
+                    url: 'courseDAO.php',
+                    name: 'major_id',
+                    inputclass: 'selectWidth',
+                    send: 'always',
+                    source: function () {
+                        return majorSelectData;
+                    },
+                    params: function (params) {
+                        params.func = 'updateCourse';
+                        return params;
+                    },
+                    success: function () {
+                        getCourseData();
+                    }
+                }
+            }, {
+                field: 'course_id',
+                title: 'หลักสูตร',
+                sortable: true
+            }
+            ],
+        });
+        $table.bootstrapTable('load', courseData);
+    }
+
+</script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-exchange right-5" aria-hidden="true"></i> ย้ายสังกัดหลักสูตรคณะ</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ค่าพื้นฐานของระบบ</li>
+                <li class="active">ย้ายสังกัดหลักสูตรคณะ</li>
+            </ol>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-10">
+
+            <table id="table"
+                   data-id-field="course_id"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-pagination-switch="true"
+                   data-show-columns="true"
+                   data-page-size="15"
+                   data-page-list="[15, 30, 50, 100]"
+            >
+
+            </table>
+
+        </div>
+    </div>
+
+
+
+
+</div>

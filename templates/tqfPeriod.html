@@ -1,0 +1,121 @@
+<script>
+
+    $(document).ready(function () {
+        getTqfPeriodData();
+        $("#showDetail").append("<h3>คณะ : " + user.faculty_id + "</h3>");
+    });
+
+    var tqfPeriodData;
+    var $table = $("#table");
+    function getTqfPeriodData() {
+        $.ajax({
+            type: 'POST',
+            url: 'tqfPeriodDAO.php',
+            data: {func: 'getPeriodData', faculty_id: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                tqfPeriodData = response;
+                tqfPeriodTable();
+            }
+        });
+    }
+
+    function tqfPeriodTable() {
+        $table.bootstrapTable({
+            columns: [
+                [{
+                    title: 'ก่อนเปิดภาคเรียน (วัน)',
+                    colspan: 1,
+                    align: 'center'
+                }, {
+                    title: 'หลังปิดภาคเรียน (วัน)',
+                    colspan: 2,
+                    align: 'center'
+                }
+                ], [{
+                    field: 'tqf34_period',
+                    title: 'มคอ. 3-4',
+                    width: "15%",
+                    editable: {
+                        type: 'text',
+                        title: 'กรอกจำนวนวัน',
+                        url: 'tqfPeriodDAO.php',
+                        params: function func(params) {
+                            params.func = 'updatePeriod';
+                            return params;
+                        },
+                        success: function () {
+                            getTqfPeriodData();
+                        }
+                    }
+                }, {
+                    field: 'tqf56_period',
+                    title: 'มคอ. 5-6',
+                    width: "15%",
+                    editable: {
+                        type: 'text',
+                        title: 'กรอกจำนวนวัน',
+                        url: 'tqfPeriodDAO.php',
+                        params: function func(params) {
+                            params.func = 'updatePeriod';
+                            return params;
+                        },
+                        success: function () {
+                            getTqfPeriodData();
+                        }
+                    }
+                }, {
+                    field: 'report_period',
+                    title: 'รายงานผลการดำเนินการ',
+                    width: "15%",
+                    editable: {
+                        type: 'text',
+                        title: 'กรอกจำนวนวัน',
+                        url: 'tqfPeriodDAO.php',
+                        params: function func(params) {
+                            params.func = 'updatePeriod';
+                            return params;
+                        },
+                        success: function () {
+                            getTqfPeriodData();
+                        }
+                    }
+                }
+                ]
+            ]
+        });
+        $table.bootstrapTable('load', tqfPeriodData);
+    }
+
+
+</script>
+
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="fa fa-calendar right-5" aria-hidden="true"></i>&nbsp;ระยะเวลาส่ง มคอ.</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ค่าพื้นฐานของระบบ</li>
+                <li class="active">ระยะเวลาส่ง มคอ.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 top-20">
+            <table id="table"  data-id-field="faculty_id">
+            </table>
+        </div>
+    </div>
+
+</div>

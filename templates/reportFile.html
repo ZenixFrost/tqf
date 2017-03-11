@@ -1,0 +1,511 @@
+<script>
+    $(document).ready(function () {
+        moment.locale('th');
+        getCurYear();
+        $("#showCourse").append("<h4>หลักสูตร : "+user.course_president+"</h4>");
+    });
+
+    var reportFileDataTable;
+    var $table = $('#table');
+    var $reportDeadlineTable = $("#reportDeadlineTable");
+    var reportDeadlineData;
+    var year;
+    var curYear;
+    var deadline;
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                year = response-1;
+                curYear = response;
+                $("#showYear").html(year);
+                getReportDeadlineData();
+            }
+        });
+    }
+
+    function getReportDeadlineData(){
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {
+                func: 'getReportDeadline',
+                year: year,
+                major_id: user.major_id
+            },
+            dataType: 'json',
+            success: function (response) {
+                reportDeadlineData = response;
+
+                if(reportDeadlineData.length != 0){
+                    deadline = reportDeadlineData[0].report_file_major_deadline;
+                }
+
+                reportDeadlineTable();
+                reportFileData();
+            }
+        });
+    }
+
+    function reportDeadlineTable(){
+        $reportDeadlineTable.bootstrapTable({
+            columns: [{
+                field: 'year',
+                title: 'ปีการศึกษา',
+                width: "5%",
+                align: 'center',
+                halign: 'center',
+                valign: 'middle',
+
+
+            }, {
+                field: 'report_file_major_deadline',
+                title: 'กำหนดการส่ง ไฟล์ มคอ. 7',
+                width: "90%",
+                formatter: deadlineFormatter
+            }
+
+            ]
+
+        });
+        $reportDeadlineTable.bootstrapTable('load', reportDeadlineData);
+    }
+
+    function deadlineFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('D MMM YYYY');
+        return [val].join('');
+    }
+
+    //---------------------------------------------------------------------------------------------------------------------
+
+    //ข้อมูล report file table
+    function reportFileData(){
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getYear' ,year: year, course_id: user.course_president},
+            dataType: 'json',
+            success: function (response) {
+                reportFileDataTable = response;
+                reportFileTable()
+            }
+        });
+    }
+
+    //โครงของ report file table
+    function reportFileTable(){
+        $table.bootstrapTable({
+            columns: [{
+                field: 'year',
+                title: 'ปีการศึกษา',
+                width: "5%",
+                align: 'center',
+                halign: 'center',
+                valign: 'middle',
+
+
+            }, {
+                field: 'report_id',
+                title: 'ไฟล์ มคอ. 7 (PDF หรือ URL)',
+                width: "90%",
+                formatter: reportOperateFormatter,
+                events: operateEvents
+            }
+            ]
+
+        });
+        $table.bootstrapTable('load', reportFileDataTable);
+        checkRemoveReportFile();
+    }
+
+    function pdfBtn(file_id){
+        return [
+            "<a class=\"right-5\" href=./server/php/files/" + file_id + " target=\"blank\">"+
+                '<img src="./images/pdf-icon.png" width="34" height="34">'+
+            '</a>'
+        ];
+    }
+
+    function linkBtn(link_id){
+        return [
+            "<a class=\"right-5\" href=" + link_id + " target=\"blank\">"+
+                '<img src="./images/file-link-icon.png" width="34" height="34">'+
+            '</a>'
+        ];
+    }
+
+    function deleteBtn(year,file_id){
+        return [
+            "<a href='' style='color: #777' class=\"deleteFile \" data-toggle=\"confirmation\" data-type=\"DELETE\" year=" + year + " data-url=./server/php/index.php?file=" + file_id + ">"+
+                '<i class="glyphicon glyphicon-trash" style="vertical-align: -3px" aria-hidden="true"></i>'+
+            '</a>'
+        ];
+    }
+
+    function linkDeleteBtn(year,link_id){
+        return [
+            "<a href='' style='color: #777' class=\"deleteLink\" year=" + year + " linkId=" + link_id + " data-toggle=\"confirmation\">"+
+                '<i class="glyphicon glyphicon-trash" style="vertical-align: -3px" aria-hidden="true"></i>'+
+            '</a>'
+        ];
+    }
+
+    //upload file button ปุ่มอัพโหลดไฟล์รายงาน
+    function reportOperateFormatter(value, row, index) {
+        var textId = "inputLink"+index;
+
+        if (value == null) {
+            return [
+                '<div class="form-inline">',
+
+                    '<div class="form-group right-10">',
+                        '<span class="btn btn-success fileinput-button">',
+                            '<i class="glyphicon glyphicon-open"></i> Upload file',
+                            '<input type="file" class="fileupload" name="files" accept="application/pdf">',
+                        '</span>',
+                    '</div>',
+
+                    ' หรือ ',
+
+                    '<div class="form-group left-10">',
+                        '<div class=\"input-group\">',
+                            '<span class=\"input-group-btn \">',
+                                "<button class=\'btn btn-success link\' tabindex="+index+">",
+                                '<span class=\"glyphicon glyphicon-link\" aria-hidden=\"true\"></span> Link</button>',
+                            '</span>',
+                            "<input type=\"text\" class=\"form-control\" style='width: 350px' id="+textId+" placeholder=\"Paste your URL here\">",
+                        '</div>',
+                    '</div>',
+
+                '</div>'
+            ].join('');
+        } else {
+
+            if(deadline != null && row["date_sent"] > deadline){
+
+                if(row["report_type"] == 0){
+                    return [
+                        pdfBtn(row["report_id"]),
+                        deleteBtn(row["year"],row["report_id"]),
+                        "\u00A0 <strong><span class='text-danger'>(ส่งล่าช้า)<span></strong>"
+                    ].join('');
+                }else if(row["report_type"] == 1){
+                    return [
+                        linkBtn(row["report_id"]),
+                        linkDeleteBtn(row["year"],row["report_id"]),
+                        "\u00A0 <strong><span class='text-danger'>(ส่งล่าช้า)<span></strong>"
+                    ].join('');
+                }
+
+            }else{
+                if(row["report_type"] == 0){
+                    return [
+                        pdfBtn(row["report_id"]),
+                        deleteBtn(row["year"],row["report_id"])
+                    ].join('');
+                }else if(row["report_type"] == 1){
+                    return [
+                        linkBtn(row["report_id"]),
+                        linkDeleteBtn(row["year"],row["report_id"])
+                    ].join('');
+                }
+            }
+
+        }
+
+    }
+
+
+    //upload file function  ฟังก์ชั่นอัพโหลดไฟล์รายและ แปะลิงค์รายงาน
+    window.operateEvents = {
+        //อัพโหลดไฟล์รายงาน
+        'click .fileupload': function (e, value, row, index) {
+            var $position = $(this).parent().parent().parent();
+            var url = window.location.hostname === 'blueimp.github.io' ?
+                    '//jquery-file-upload.appspot.com/' : 'server/php/';
+            $('.fileupload').fileupload({
+                url: url,
+                dataType: 'json',
+                acceptFileTypes: /\/(pdf)$/i,
+                progressall: function (e, data) {
+                    var progressBar =
+                            "<div class=\"progress\" id=\"progress\" style='width: 200px'>"+
+                            "<div class=\"progress-bar progress-bar-success progress-bar-striped active\" role=\"progressbar\" aria-valuenow=\"0\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: 0%\">"+
+                            "<span class=\"sr-only\">40% Complete (success)</span>"+
+                            "</div>"+
+                            "</div>";
+
+                    $position.html(progressBar);
+                    var progress = parseInt(data.loaded / data.total * 100, 10);
+
+                    $('#progress .progress-bar').css(
+                            'width',
+                            progress + '%'
+                    );
+                },
+                done: function (e, data, index) {
+                    $.each(data.result.files, function (index, file) {
+                        addReport(file.name, row ,0);
+                    });
+                },
+                fail: function (e, data) {
+                    $position.popover({
+                        trigger: 'focus',
+                        container: 'body',
+                        placement: 'top',
+                        content: 'ขนาดไฟล์ใหญ่เกินไป'
+                    });
+
+                    $position.popover('show');
+                    setTimeout(function () {
+                        $(".popover").popover('hide');
+                    },1500);
+
+                    reportFileData();
+                }
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+        },
+        //แปะลิงค์รายงานผลดำนเนิการ
+        'click .link': function (e, value, row, index) {
+
+            var id = "#inputLink"+index;
+            var data = $(id).val();
+
+            if(data != ""){
+                addReport(data, row, 1);
+                setTimeout(function(){
+                    reportFileData();
+                },100);
+            }else{
+                $(id).popover({
+                    content: " กรุณากรอก URL ในฟิลด์นี้",
+                    trigger: 'manual',
+                    container: 'body',
+                    placement: 'right'
+                });
+                $(id).popover('show');
+                setTimeout(function () {
+                    $(id).popover('hide');
+                },1500);
+            }
+        }
+    };
+
+
+    //report type 0 = file, 1 = link
+    //ฟังก์ชั่นเพิ่มข้อมูล ลิงค์รายงาน ลงใน DB
+    function addReport(reportName, data ,reportType) {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'addReport', report_id: reportName, data: data, user: user.user_id ,course_id: user.course_president ,report_type: reportType},
+            success: function (response) {
+                reportFileData();
+            }
+        })
+    }
+
+    //ฟังก์ชั่น เช็คลบไฟล์รายงานและลบไฟล์ (ลบตัวไฟล์จริงๆ)
+    function checkRemoveReportFile() {
+        $('.deleteFile').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบไฟล์",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์นี้",
+            popout: true,
+            singleton: true,
+            onConfirm: function () {
+                var $link = $(this);
+                var year = $(this).attr('year');
+
+                $.ajax({
+                    dataType: 'json',
+                    url: $link.data('url'),
+                    type: 'DELETE',
+                    success: function (response) {
+                        var fileId = Object.keys(response);
+                        removeReport(fileId[0], year);
+                        setTimeout(function(){
+                            reportFileData();
+                        },100);
+                    }
+                });
+
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+
+        $('.deleteLink').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบลิงค์",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบลิงค์นี้",
+
+            popout: true,
+            singleton: true,
+            onConfirm: function () {
+                var linkId = $(this).attr('linkId');
+                var year = $(this).attr('year');
+                removeReport(linkId , year);
+                setTimeout(function(){
+                    reportFileData();
+                },100);
+
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+
+    //ลบข้อมูล รายงาน ใน DB
+    function removeReport(reportName , year) {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'removeReport', report_id: reportName , year: year , course_id: user.course_president},
+            dataType: 'json',
+            success: function () {
+            }
+        });
+    }
+
+    $("#old").on('click',function () {
+        year--;
+        $("#showYear").html(year);
+        if(year < curYear){
+            $("#new").prop( "disabled", false );
+        }
+        getReportDeadlineData();
+        reportFileData();
+    });
+
+    $("#new").on('click',function () {
+        year++;
+        $("#showYear").html(year);
+        if(year == curYear){
+            $("#new").prop( "disabled", true );
+        }
+        getReportDeadlineData();
+        reportFileData();
+    });
+
+    $("#showYear").on('click',function () {
+        getReportDeadlineData();
+        reportFileData();
+    });
+
+
+</script>
+
+<div class="container-fluid">
+
+
+    <div class="page-header">
+        <h1><i class="glyphicon glyphicon-open right-5" aria-hidden="true"></i> ส่งไฟล์ รายงานผลการดำเนินงานของหลักสูตร <small>(มคอ. 7)</small></h1>
+    </div>
+
+
+    <ol class="breadcrumb">
+        <li class="active">ส่งไฟล์ มคอ.</li>
+        <li class="active">ไฟล์ รายงานฯ</li>
+    </ol>
+
+    <div class="row">
+        <div class="col-md-12 top-10">
+            <h4>
+                ปีการศึกษา :
+                <div class="btn-group" role="group">
+                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+                    <button type="button" id="showYear" class="btn btn-default"></button>
+
+                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                </div>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-5" id="showCourse">
+        </div>
+    </div>
+
+
+    <!--กำหนดส่ง มคอ. 3-6-->
+    <div class="row">
+        <div class="col-md-12 top-10">
+            <h4><i class="fa fa-calendar" aria-hidden="true"></i> กำหนดการส่งไฟล์ มคอ. 7</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-lg-3 top-10">
+            <table id="reportDeadlineTable"></table>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12 top-20">
+            <h4><i class="fa fa-upload" aria-hidden="true"></i> ส่งไฟล์ มคอ. 7</h4>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-12 col-lg-8 col-xxl-6">
+
+            <div class="top-10"></div>
+            <table id="table" data-id-field="year">
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!--<div class="row top-30">-->
+
+    <!--<label class=\"control-label\">ลิงค์รายงาน (URL) : </label>-->
+
+    <!--<div class="input-group col-md-8">-->
+        <!--<span class="input-group-btn"><button class='btn btn-success link'><span class="glyphicon glyphicon-link" aria-hidden="true"></span> Link</button>-->
+        <!--</span>-->
+        <!--<input type="text" class="form-control" id="test" placeholder="Paste your URL here" />-->
+    <!--</div>-->
+
+<!--</div>-->
+
+

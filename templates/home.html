@@ -1,0 +1,378 @@
+<script>
+    var year;
+    var facultyId = user.faculty_id;
+    var courseId;
+    var courseTableData;
+    var $courseTable = $('#courseTable');
+    var $tqfTable = $('#tqfTable');
+
+
+    $(function () {
+        getFaculty();
+        getCourseTree();
+        getCurYear();
+
+    });
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน แล้วโชว์ตรงที่กดปี
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                year = response;
+                $("#showYear").html(year);
+            }
+        });
+    }
+
+    //ข้อมูลของ คณะ ภาค สาขา หลักสูตร ที่เลือก
+    function getCourseTree() {
+        $.ajax({
+            type: 'POST',
+            url: 'viewTqfFile.php',
+            data: {func: 'getCourse', faculty_id: facultyId},
+            dataType: 'json',
+            success: function (response) {
+                courseTableData = response;
+                tqfTable();
+            }
+        });
+    }
+
+    //report table เอาข้อมูลมาโชว์และทำเป็น table
+    function tqfTable() {
+
+        $courseTable.bootstrapTable({
+            columns: [
+                {
+                    title: 'ลำดับ',
+                    formatter: function (value, row, index) {
+                        return [index+1].join('  ');
+                    },
+                    width: '1%',
+                    align: 'center'
+
+                },{
+                    field: 'sector_id',
+                    title: 'ภาควิชา',
+                    width: "25%",
+                    cellStyle:function cellStyle(value, row, index, field) {
+                        return {
+                            css: { "font-size": "16px"}
+                        };
+                    },
+                    formatter: sectorFormatter
+
+                },{
+                    field: 'major_id',
+                    title: 'สาขาวิชา',
+                    width: "25%",
+                    formatter: majorFormatter
+
+                },{
+                    field: 'course_id',
+                    title: 'หลักสูตร',
+                    width: "25%",
+                    formatter: courseLinkFormatter
+                }
+            ]
+        });
+        $courseTable.bootstrapTable('load', courseTableData);
+
+    }
+
+    var sector;
+    var major;
+
+    //format ของภาควิชา sector ที่จะโชว์แค่อันแรก
+    function sectorFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && sector == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        sector = value;
+        return [ val ].join('');
+
+    }
+
+    //format ของสาขาวิชา major ที่จะโชว์แค่อันแรก
+    function majorFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && major == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        major = value;
+        return [ val ].join('');
+
+    }
+
+    function courseLinkFormatter(value, row, index){
+        var courseLink = '<a href="" class=course id="'+value+'" data-toggle="modal" data-target="#courseModal">'+value+'</a>';
+        return [ courseLink ].join('');
+
+    }
+
+    //event ตอนเปลี่ยนคณะ
+    $("#selectFaculty").on('change',function () {
+        facultyId = $("#selectFaculty").val();
+        getCourseTree();
+    });
+
+    //event ตอนกดเลือกหลักสูตร course
+    $(document).on('click',".course",function () {
+        courseId = $(this).attr('id');
+//        $("#showTree").hide();
+
+        $("#showCourse").html(courseId);
+
+//        $("body, html").animate({
+//            scrollTop: $("#showCourse").offset().top
+//        }, 100);
+
+        courseTable();
+        return false;
+    });
+
+    //กดย้อนกลับไปหน้าเลือก หลักสูตร
+//    $("#back").on('click',function () {
+//        $("#showTree").show();
+//        $("#showTable").hide();
+//        return false;
+//    });
+
+    //select ของ คณะ โดยจะโชว์คณะทั้งหมด
+    function getFaculty(){
+        $.ajax({
+            type: 'POST',
+            url: 'viewTqfFile.php',
+            data: {func: 'getFaculty', faculty_id:user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                var optionFaculty = "";
+                $.each(response,function (i,faculty) {
+                    if(faculty.faculty_id == user.faculty_id){
+                        optionFaculty += "<option value='"+faculty.faculty_id+"' selected>"+faculty.faculty_id+"</option>";
+                    }else{
+                        optionFaculty += "<option value="+faculty.faculty_id+">"+faculty.faculty_id+"</option>";
+                    }
+                });
+                $("#selectFaculty").html(optionFaculty).selectpicker('refresh');
+            }
+        });
+    }
+
+    var tqfTableData;
+
+    //โครงของ tqf course table
+    function courseTable() {
+
+        $.ajax({
+            type: 'POST',
+            url: 'viewTqfFile.php',
+            data: {func: 'getCourseDataTable', course_id: courseId ,year: year},
+            dataType: 'json',
+            success: function (response) {
+                tqfTableData = response;
+                termIndex = null;
+                courseDataTable();
+            }
+        });
+
+    }
+    var termIndex;
+    var valIndex = 0;
+
+    //data ของ course table
+    function courseDataTable() {
+
+        $tqfTable.bootstrapTable({
+            columns: [{
+                field: 'term',
+                title: 'ภาคเรียน',
+                width: "1%",
+                align: 'center',
+                valign: 'middle',
+                formatter: termFormatter
+            },{
+                title: 'ลำดับ',
+                width: '1%',
+                valign: 'middle',
+                formatter: function (value, row, index) {
+
+                    if(termIndex != row["term"]){
+                        valIndex = index;
+                    }
+
+                    termIndex = row["term"];
+
+
+                    return [ ((index+1)-valIndex) ].join('  ');
+                },
+                align: 'center'
+            },{
+                field: 'subject_id',
+                title: 'วิชา',
+                width: "30%",
+                valign: 'middle',
+                formatter: function (value, row) {
+                    return [row.subject_id, row.subject_name].join(' - ');
+                },
+                sortable: true
+            }, {
+                field: 'file_id',
+                title: 'ไฟล์ มคอ. 3/4',
+                width: "1%",
+                align: 'center',
+                formatter: tqfOperateFormatter
+            }
+            ]
+        });
+        $tqfTable.bootstrapTable('load', tqfTableData);
+
+    }
+
+    var term;
+
+    //format ของภาควิชา sector ที่จะโชว์แค่อันแรก
+    function termFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && term == value){
+            val = "";
+        }else{
+            val = value+"/"+row["year"];
+        }
+
+        term = value;
+        return [val].join('');
+
+    }
+
+
+    //upload file button ปุ่มอัพโหลดไฟล์รายงาน
+    function tqfOperateFormatter(value, row, index) {
+
+        if(row["file_id"] != null){
+            return [
+                "<a class=\"right-15\" href=./server/php/files/" + row["file_id"] + " target=\"blank\">",
+                    '<img src="./images/pdf-icon.png" width="34" height="34">',
+//                    '<i class="fa fa-file-pdf-o fa-lg" aria-hidden="true"></i>\u00A0 Download PDF',
+                '</a>'
+            ].join('');
+        }else{
+            return [
+                "<strong><span class='text-danger'>ยังไม่ได้ส่ง<span></strong>"
+            ].join('');
+        }
+    }
+
+    //ลบปี
+    $("#old").on('click',function () {
+        year--;
+        $("#showYear").html(year);
+        courseTable();
+    });
+
+    //เพิ่มปี
+    $("#new").on('click',function () {
+        year++;
+        $("#showYear").html(year);
+        courseTable();
+    });
+
+    //ปีปัจจุบัน
+    $("#showYear").on('click',function () {
+        courseTable();
+    });
+
+</script>
+
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="glyphicon glyphicon-home"></i>&nbsp; หน้าแรก</h1>
+    </div>
+
+    <ol class="breadcrumb">
+        <li class="active">หน้าแรก</li>
+    </ol>
+
+    <div id="showTree">
+
+        <div class="row">
+            <div class="col-md-10 top-10">
+
+                <label for="selectFaculty"><h4>คณะ : </h4></label>
+
+                <select class="selectpicker" name="selected" data-live- search="true" id="selectFaculty" data-width="300px">
+                </select>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="top-20 col-md-10">
+                <table id="courseTable"></table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">ตารางหลักสูตร</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>
+                                ปีการศึกษา :
+                                <div class="btn-group" role="group" >
+                                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+                                    <button type="button" id="showYear" class="btn btn-default"></button>
+                                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                                </div>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div  class="row">
+                        <div class="col-md-12 top-5">
+                            <h4>
+                                หลักสูตร : <span id="showCourse"></span>
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 top-10 ">
+                            <table id="tqfTable">
+
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

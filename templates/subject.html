@@ -1,0 +1,540 @@
+<style>
+    .form-inline .form-group input {
+        width: 300px;
+    }
+
+     .selectWidth {
+         width: 280px;
+     }
+
+</style>
+
+<script>
+    $(document).ready(function () {
+        getSelectCourse();
+        getSubjectNameSuggest();
+        checkRemoveData();
+        $("#showDetail").append("<h3>สาขา : "+user.major_id+"</h3>");
+    });
+
+    var subjectName;
+
+    //auto sector complete
+    function getSubjectNameSuggest() {
+        $.ajax({
+            type: 'POST',
+            url: 'subjectDAO.php',
+            data: {func: 'getSubject'},
+            dataType: 'json',
+            success: function (response) {
+                subjectName = response;
+
+                $("#subjectName"+(subjectsNum-1)).autocomplete({
+                    lookup: subjectName,
+                    onSelect: function (suggestion) {
+//                       alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
+                        var index = $(this).attr("tabindex");
+                        $("#subjectId"+index).val(suggestion.data);
+                    }
+                });
+            }
+        });
+    }
+
+
+    var $table = $("#table");
+    var $remove = $("#remove");
+    var courseData;
+    var courseSelect;
+    var subjectData;
+
+    var courseId;
+
+    //Select course ตอนที่ add subject (drop down ของหลักสูตรตรงที่เพิ่มวิชา)
+    function getSelectCourse() {
+        $.ajax({
+            type: 'POST',
+            url: 'subjectDAO.php',
+            data: {func: 'getSelectCourse', userId: user.user_id},
+            dataType: 'json',
+            success: function (response) {
+
+                courseData = response;
+                var select = "";
+                var courseRadioBtn = " หลักสูตร : ";
+                $.each(courseData, function (i, course) {
+                    select += "<option value=" + course.course_id + ">" + course.course_id + "</option>";
+
+                    if(i == 0){
+                        courseRadioBtn += "<label class=\"radio-inline\"><input type=\"radio\" name=courseTable class='courseSubjectRadioBtn' value="+course.course_id+" checked >"+course.course_id+"</label> ";
+                    }else{
+                        courseRadioBtn += "<label class=\"radio-inline\"><input type=\"radio\" name=courseTable class='courseSubjectRadioBtn' value="+course.course_id+">"+course.course_id+"</label> ";
+                    }
+                });
+                $("#courseSelect").html(select).selectpicker('refresh');
+                $("#subjectType0").selectpicker('refresh');
+
+                //ปุ่ม course radio
+                $("#showRadioBtn").html(courseRadioBtn);
+
+                //ค่า course จาก radio button
+                courseId = $(".courseSubjectRadioBtn:checked").val();
+
+                getSubjectData();
+
+
+            }
+        });
+
+    }
+
+    //ข้อมูล json ที่จะเอามใช้ใน Table ของ course_subject
+    function getSubjectData() {
+        $.ajax({
+            type: 'POST',
+            url: 'subjectDAO.php',
+            data: {func: 'getSubjectData', courseId: courseId},
+            dataType: 'json',
+            success: function (response) {
+                subjectData = response;
+                getCourseSelectTable();
+            }
+        });
+    }
+
+    //ข้อมูล select course ตอน edit table
+    function getCourseSelectTable() {
+        $.ajax({
+            type: 'POST',
+            url: 'subjectDAO.php',
+            data: {func: 'getCourseSelectTable', userId: user.user_id},
+            dataType: 'json',
+            success: function (response) {
+                courseSelect = response;
+                subjectTable();
+            }
+        });
+    }
+
+    var courseIndex;
+    var valIndex = 0;
+
+    //Table ของ course_subject
+    function subjectTable() {
+        $table.bootstrapTable({
+            idField: 'index',
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+//                {
+//                field: 'course_id',
+//                title: 'หลักสูตร',
+//                sortable: true,
+//                editable: {
+//                    type: 'select2',
+//                    title: 'เลือกหลักสูตร',
+//                    url: 'subjectDAO.php',
+//                    inputclass: 'selectWidth',
+//                    source: function () {
+//                        return courseSelect;
+//                    },
+//                    params: function (params) {
+//                        getPk(params);
+//                        params.func = 'updateCourseSubject';
+//                        return params;
+//                    },
+//                    success: function () {
+//                        getSubjectData();
+//                    }
+//
+//                }
+//
+//            },
+                {
+                title: 'ลำดับ',
+                formatter: function (value, row, index) {
+
+                    if(courseIndex != row["course_id"]){
+                        valIndex = index;
+                    }
+
+                    courseIndex = row["course_id"];
+
+
+                    return [ ((index+1)-valIndex) ].join('  ');
+                },
+                width: '1%',
+                align: 'center'
+
+            }, {
+                field: 'subject_id',
+                title: 'รหัสวิชา',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'กรอกรหัสวิชา',
+                    url: 'subjectDAO.php',
+                    emptytext: 'ไม่มีรหัสวิชา',
+                    params: function (params) {
+                        getPk(params);
+                        params.func = 'updateCourseSubject';
+                        return params;
+                    },
+                    success: function () {
+                        getSubjectData();
+                    }
+                }
+            }, {
+                field: 'subject_name',
+                title: 'ชื่อวิชา',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'กรอกชื่อวิชา',
+                    url: 'subjectDAO.php',
+                    emptytext: 'ไม่มีชื่อวิชา',
+                    params: function (params) {
+                        getPk(params);
+                        params.func = 'updateCourseSubject';
+                        return params;
+                    },
+                    success: function () {
+                        getSubjectData();
+                    }
+                }
+            }, {
+                field: 'subject_type',
+                title: 'ประเภทวิชา',
+                sortable: true,
+                editable: {
+                    type: 'select',
+                    title: 'เลือกประเภทวิชา',
+                    url: 'subjectDAO.php',
+                    emptytext: 'ไม่มี',
+                    send: 'always',
+                    source: [
+                        {value: 0, text: 'วิชาทั่วไป'},
+                        {value: 1, text: 'วิชาสหกิจ'}
+                    ],
+                    params: function func(params) {
+                        getPk(params);
+                        params.func = 'updateCourseSubject';
+                        return params;
+                    },
+                    success: function () {
+                        getSubjectData();
+                    }
+                }
+            }
+            ]
+        });
+        $table.bootstrapTable('load', subjectData);
+    }
+
+
+    //หาค่า PK subject_id และ course_id
+    function getPk(params) {
+        var data = $('#table').bootstrapTable('getData');
+        $.each(data, function (i, subject) {
+            if (params.pk == subject.index) {
+                params.subjectId = subject.subject_id;
+                params.courseId = subject.course_id;
+            }
+        });
+        return params;
+    }
+
+    //add subject
+    $(document).ready(function () {
+        $("#addSubjects").on('click',function () {
+            var data = $("#addSubject").serialize() + '&' + $.param({func: 'addSubject'});
+
+            $.ajax({
+                type: 'POST',
+                url: 'subjectDAO.php',
+                data: data,
+                success: function (response) {
+//                    getSelectCourse();
+                    getSubjectData();
+
+//                    if (response == "success") {
+//                        getSelectCourse();
+//                    } else {
+//                        var error =
+//                                "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11 top-15\" role=\"alert\">" +
+//                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+//                                "<span aria-hidden=\"true\">&times;</span>" +
+//                                "</button>" +
+//                                "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+//                                "<strong>Error!</strong> " + response +
+//                                "</div>";
+//
+//                        $("#error").append(error);
+//                    }
+                }
+            });
+
+            return false;
+        });
+    });
+
+    var subjectsNum = 1;
+    //add subjects slot เพิ่มช่องวิชา
+    $(document).ready(function () {
+        $("#addSubjectsSlot").on('click', function () {
+            var $show = $("#show");
+
+            var subjects =
+                    "<div class=\"form-inline top-20\" id=subjectsLine"+subjectsNum+">" +
+
+                        "<div class=\"form-group left-70\">" +
+                            "<label for=subjectId"+subjectsNum+">"+(subjectsNum+1)+". รหัสวิชา : </label>" +
+                            "<input type=\"text\" class=\"form-control\" name=\"subjectId[]\" id=subjectId"+subjectsNum+" placeholder=\"X-XXX-XXX\">" +
+                        "</div>" +
+
+                        "<div class=\"form-group left-20\">" +
+                            "<label for=subjectName"+subjectsNum+">ชื่อวิชา : \u00A0</h4></label>" +
+                            "<input type='text' class='form-control' name='subjectName[]' tabindex="+subjectsNum+" id=subjectName"+subjectsNum+" placeholder=\"ชื่อรายวิชา\">" +
+                        "</div>" +
+
+                        "<div class=\"form-group left-20\">" +
+                            "<label for=subjectType"+subjectsNum+">ประเภทวิชา : \u00A0</label>" +
+                            "<select class=\"selectpicker\" id=subjectType"+subjectsNum+" name=\"subjectType[]\" data-width=\"auto\">" +
+                                "<option value=\"0\">วิชาทั่วไป</option>" +
+                                "<option value=\"1\">วิชาสหกิจ</option>" +
+                            "</select>" +
+                        "</div>" +
+
+                        "<div class=\"form-group\">"+
+                            "\u00A0<button class=\"btn btn-danger left-10 removeSubjectSlot\" tabindex="+subjectsNum+">"+
+                                "<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span> ลบวิชา"+
+                            "</button>"+
+                        "</div>"+
+
+                    "</div>";
+
+//            $show.before(subjects);
+            $show.before($(subjects).hide().fadeIn('fast'));
+
+
+            $("#subjectType" + subjectsNum).selectpicker('render');
+            subjectsNum++;
+            getSubjectNameSuggest();
+            return false;
+        });
+    });
+
+    //remove subjects slot
+    $(document).ready(function () {
+        $(document).on('click', ".removeSubjectSlot", function () {
+            var id = $(this).attr("tabindex");
+            $("#subjectsLine"+id).remove();
+//            $("#subjectsLine"+id).fadeOut('fast', function() { $(this).remove(); });
+            return false;
+        });
+    });
+
+
+    //remove course_subject
+    $(document).ready(function () {
+        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        });
+//        $remove.click(function () {
+//            var data = $table.bootstrapTable('getSelections');
+//            $.ajax({
+//                type: 'POST',
+//                url: 'subjectDAO.php',
+//                data: {func: 'removeCourseSubject', data: data},
+//                success: function () {
+//                    getSelectCourse();
+//                }
+//            });
+//            $remove.prop('disabled', true);
+//        });
+    });
+
+
+    //ฟังก์ชั่น เช็ดลบข้อมูล แล้วลบข้อมูลถ้ากดตกลง
+    function checkRemoveData() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบข้อมูล",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้",
+            popout: true,
+            singleton: true,
+            container: 'body',
+            onConfirm: function () {
+                //ลบข้อมูลผ่าน ajax
+
+                //ข้อมูล จาก table ที่ selected จาก checkbox
+                var data = $table.bootstrapTable('getSelections');
+                $.ajax({
+                    type: 'POST',
+                    url: 'subjectDAO.php',
+                    data: {func: 'removeCourseSubject', data: data},
+                    success: function () {
+                        getSubjectData();
+//                        getSelectCourse();
+                    }
+                });
+                $remove.prop('disabled', true);
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+    //////////เปลี่ยนข้อมูลที่โชว์ตรง table ตรงที่บันทึกข้อมูล//////////
+
+    //เปลี่ยนหลักสูตรแล้วขึ้นข้อมูล จากตรงที่บันทึกข้อมูล open subject
+    $("#courseSelect").on("change",function () {
+        courseId = $("#courseSelect").val();
+        $("#showRadioBtn input[value="+courseId+"]").prop("checked", true );
+        getSubjectData();
+        return false;
+    });
+
+    //////////เปลี่ยนข้อมูลที่โชว์ตรง table (ที่กดเปลี่ยนข้างล่าง)//////////
+
+    //กดเปลี่ยน course จาก radio button
+    $(document).on('change',".courseSubjectRadioBtn",function () {
+        courseId = $(".courseSubjectRadioBtn:checked").val();
+        getSubjectData();
+    });
+
+</script>
+<div class="container-fluid">
+
+
+
+    <div class="page-header">
+        <h1><i class="fa fa-book right-5" aria-hidden="true"></i> วิชาของหลักสูตร</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">กำหนดวิชาและกลุ่มเรียน</li>
+                <li class="active">วิชาของหลักสูตร</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-20">
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <i class="fa fa-plus" aria-hidden="true"></i> <strong>เพิ่มข้อมูลวิชา</strong>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+
+                        <form id="addSubject">
+                            <div class="form-inline">
+                                <div class="form-group ">
+                                    <label for="courseSelect">หลักสูตร : </label>
+                                    <select class="selectpicker" name="course" id="courseSelect" data-live-search="true" data-width="auto">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-inline top-25">
+                                <div class="form-group left-70">
+                                    <label for="subjectId0">1. รหัสวิชา : </label>
+                                    <input type="text" class="form-control" name="subjectId[]" id="subjectId0" placeholder="X-XXX-XXX">
+                                </div>
+                                <div class="form-group left-20">
+                                    <label for="subjectName0">ชื่อวิชา : </label>
+                                    <input type="text" class="form-control" name="subjectName[]" tabindex="0" id="subjectName0" placeholder="ชื่อรายวิชา">
+                                </div>
+                                <div class="form-group left-20">
+                                    <label for="subjectType0">ประเภทวิชา : </label>
+                                    <select class="selectpicker" id="subjectType0" name="subjectType[]" data-width="auto">
+                                        <option value="0">วิชาทั่วไป</option>
+                                        <option value="1">วิชาสหกิจ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group left-10">
+                                    <button class="btn btn-primary" id="addSubjectsSlot">
+                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> เพิ่มวิชา
+                                    </button>
+                                </div>
+                                <div id="show"></div>
+                            </div>
+
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary pull-right" id="addSubjects">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> บันทึกข้อมูล
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>
+                <span id="showRadioBtn"></span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-10">
+
+            <div id="toolbar">
+                <button id="remove" class="btn btn-danger" data-toggle="confirmation" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> ลบข้อมูล
+                </button>
+            </div>
+
+            <table id="table"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-pagination-switch="true"
+                   data-toolbar="#toolbar"
+                   data-show-columns="true"
+                   data-page-size="15"
+                   data-page-list="[15, 30, 50, 100]"
+            >
+            </table>
+
+        </div>
+    </div>
+
+</div>
+

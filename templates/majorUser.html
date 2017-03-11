@@ -1,0 +1,424 @@
+<style>
+    .selectWidth {
+        width: 300px;
+    }
+
+    .form-inline .form-group input {
+        width: 250px;
+    }
+
+</style>
+
+<script>
+    $(document).ready(function () {
+        getMajorUser();
+        getUserId();
+        $("#showDetail").append("<h3>สาขา : "+user.major_id+"</h3>");
+    });
+
+    ///////////////////////////////////////////////////MAJOR TABLE/////////////////////////////////////////////////////////
+    var $table = $('#table');
+    var majorUserData;
+    var courseId;
+
+
+    //user ทั้งหมดของสาขาที่กำหนด
+    function getMajorUser() {
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getMajorUser', val: user.major_id},
+            dataType: 'json',
+            success: function (response) {
+                majorUserData = response;
+                getCourseId();
+            },
+            error: function () {
+                alert("Don't have any data.");
+            }
+        });
+    }
+
+    //get Course Id ทั้งหมดของสาขาที่กำหนด
+    function getCourseId(){
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getAllCourse', val: user.major_id},
+            dataType: 'json',
+            success: function(response){
+                courseId = response;
+                majorUserTable();
+            }
+        });
+    }
+
+    //major user table
+    function majorUserTable() {
+
+        var userDetail = [{
+                title: 'รายละเอียดบัญชี',
+                colspan: 5,
+                align: 'center'
+            }, {
+                title: 'ผู้ดูแลระบบของหลักสูตร',
+                colspan: courseId.length,
+                align: 'center'
+            }
+        ];
+
+        var majorTableData =[{
+                field: 'state',
+                checkbox: true
+            },{
+                title: 'ลำดับ',
+                formatter: function (value, row, index) {
+                    return [index+1].join('  ');
+                },
+                width: '1%',
+                align: 'center'
+
+            },{
+                field: 'name',
+                title: 'ชื่อ',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'กรอกชื่อ',
+                    url: 'majorUserDAO.php',
+                    name: 'name',
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        return params;
+                    },
+                    success: function () {
+                        getMajorUser();
+                    }
+                }
+            },{
+                field: 'surname',
+                title: 'นามสกุล',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'กรอกนามสกุล',
+                    url: 'majorUserDAO.php',
+                    name: 'surname',
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        return params;
+                    },
+                    success: function () {
+                        getMajorUser();
+                    }
+                }
+            },{
+                field: 'user_id',
+                title: 'อีเมล',
+
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'กรอกอีเมล',
+                    url: 'majorUserDAO.php',
+                    name: 'user_id',
+                    params: function func(params) {
+                        params.func = 'updateUser';  //เพิ่ม params func เข้าไป
+                        return params;
+                    },
+                    success: function () {
+                        getMajorUser();
+                    }
+                }
+            }
+        ];
+
+        ///เพิ่ม key และ value ของ course มาทีหลัง
+        $.each(courseId,function (i,course) {
+            var curCourseId = course.course_id;
+            var curInitial = course.initial;
+            majorTableData.push({
+                field: curCourseId,
+                title: curInitial,
+                align: 'center',
+                sortable: true,
+                cellStyle:function cellStyle(value, row, index, field) {
+                    return {
+                        css: {"font-size": "150%"}
+                    };
+                },
+                width:"15%",
+                editable: {
+                    type: 'select',
+                    title: 'เลือกสถานะ',
+                    url: 'majorUserDAO.php',
+                    name: curCourseId,
+                    source: [
+                        {value: 1, text: '✔'},
+                        {value: 0, text: '-'}
+                    ],
+                    params: function(params) {
+                        params.func = 'updateCourseAdmin';
+                        return params;
+                    },
+                    success: function () {
+                        getMajorUser();
+                    }
+                }
+            });
+        });
+
+        $table.bootstrapTable({
+            columns:[userDetail,majorTableData]
+//            data: majorUserData
+        });
+        $table.bootstrapTable('load', majorUserData);
+    }
+
+    //add user
+//    $(document).ready(function () {
+//        $("#addUser").submit(function () {
+//            var data = $(this).serialize() + '&' + $.param({func: 'addUser', major_id: user.major_id});
+//            $.ajax({
+//                type: 'POST',
+//                url: 'majorUserDAO.php',
+//                data: data,
+//                dataType: 'html',
+//                success: function (response) {
+//                    if (response == "success") {
+//                        getMajorUser();
+//                    } else {
+//                        var error = "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11 top-15\" role=\"alert\">" +
+//                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+//                                "<span aria-hidden=\"true\">&times;</span>" +
+//                                "</button>" +
+//                                "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+//                                "<strong>Error!</strong> " + response +
+//                                "</div>";
+//
+//                        $("#error").append(error);
+//                    }
+//                }
+//            });
+//            return false;
+//        });
+//    });
+
+    var $remove = $('#remove');
+
+    //remove user
+    $(document).ready(function () {
+        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        });
+        $remove.click(function () {
+            var data = $table.bootstrapTable('getSelections');
+            $.ajax({
+                type: 'POST',
+                url: 'majorUserDAO.php',
+                data: {func: 'removeUser', data: data},
+                success: function () {
+                    getMajorUser();
+                    getUserId();
+                }
+            });
+            $remove.prop('disabled', true);
+        });
+    });
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+    var userIdData;
+
+    //จะทำการ get user_id (email) มาทั้งหมดเพื่อทำการตรวจสอบ
+    function getUserId() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getUserId'},
+            dataType: 'json',
+            success: function (response) {
+                userIdData = response;
+            }
+        });
+    }
+
+    //ตรวจสอบข้อมูลก่อน submit เป็นช่องว่างหรือว่า email ซ้ำไหม
+    $(document).ready(function () {
+        $('#addUser').formValidation({
+            framework: 'bootstrap',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            locale: 'th_TH',
+            fields: {
+                user_id: {
+                    validators: {
+                        callback: {
+                            message: 'อีเมลนี้ผู้ใช้แล้ว',
+                            callback: function (value, validator, $field) {
+
+                                //เช็คว่า email ซ้ำไหม
+                                var checkUser = true;
+                                // Determine the numbers which are generated in captchaOperation
+                                $.each(userIdData, function (i, user) {
+                                    if (user.user_id == value) {
+                                        checkUser = false;
+                                    }
+                                });
+
+                                return checkUser;
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }).on('success.form.fv', function (e) {
+            // Prevent form submission
+            e.preventDefault();
+
+            var data = $(this).serialize() + '&' + $.param({func: 'addUser', major_id: user.major_id});
+            var name = $("#name").val();
+            var surname = $("#surname").val();
+
+            $.ajax({
+                type: 'POST',
+                url: 'majorUserDAO.php',
+                data: data,
+                dataType: 'html',
+                success: function (response) {
+                    if (response == "success") {
+                        var status = "<div class=\"alert alert-success alert-dismissible col-xs-9\" role=\"alert\">"+
+                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>"+
+                                "คุณได้เพิ่มบัญชีของ <strong>"+name+" "+surname+"</strong> เรียบร้อยแล้ว"+
+                                "</div>";
+                        $("#userStatus").html(status);
+                        getMajorUser();
+                    }
+                }
+            });
+            getUserId();
+            $('#addUser').bootstrapValidator('resetForm', true);
+        });
+    });
+
+
+</script>
+
+
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="fa fa-user-plus" aria-hidden="true"></i> บัญชีผู้ใช้<small> (ผู้ดูแลระบบของสาขา)</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ตั้งค่าบัญชีผุ้ใช้ (Admin สาขา)</li>
+                <li class="active">บัญชีผู้ใช้</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+
+
+    <div class="panel panel-default top-20">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                   aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fa fa-plus" aria-hidden="true"></i> <strong>เพิ่มบัญชี</strong>
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+
+                <form class="form-inline top-10" id="addUser">
+
+
+                    <div class="form-group">
+                        <label class="top-5" for="name">ชื่อ : </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="" required="required">
+
+                    </div>
+
+                    <!--นามสกุล-->
+                    <div class="form-group">
+                        <label class="top-5 left-20" for="surname">นามสกุล : </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="surname" id="surname" placeholder=""
+                               required="required">
+                    </div>
+
+
+                    <!--อีเมล-->
+                    <div class="form-group">
+                        <label class="top-5 left-20" for="user_id">อีเมล : </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="user_id" id="user_id" placeholder="example@gmail.com"
+                               required="required">
+                    </div>
+
+                    <hr>
+
+                    <div id="userStatus">
+
+                    </div>
+
+                    <button type="submit" class="btn btn-primary pull-right">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> บันทึกข้อมูล
+                    </button>
+
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-20">
+
+            <div id="toolbar">
+                <button id="remove" class="btn btn-danger" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> ลบข้อมูล
+                </button>
+            </div>
+            <table id="table"
+                   data-id-field="user_id"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true"
+
+                   data-show-pagination-switch="true"
+                   data-toolbar="#toolbar"
+                   data-show-columns="true"
+                   data-page-size="15"
+                   data-page-list="[15, 30, 50, 100]"
+            >
+            </table>
+
+        </div>
+    </div>
+
+
+</div>

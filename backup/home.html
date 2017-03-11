@@ -1,0 +1,461 @@
+<script>
+    var countries = [
+        {value: 'Andorra', data: 'AD'},
+        {value: 'Zimbabwe', data: 'ZZ'},
+        {value: 'asdndorra', data: 'AjhjD'},
+        {value: 'Andodsdrra', data: 'AsdD'},
+        {value: 'Anasddorra', data: 'AssdD'},
+        {value: 'Andodsdrra', data: 'AdddD'},
+        {value: 'Andasdorra', data: 'AaD'},
+        {value: 'วิทยาการคอมพิวเตอร์', data: 'วิทยาการคอมพิวเตอร์'},
+
+    ];
+
+    $('#autocomplete').autocomplete({
+        lookup: countries,
+
+    });
+
+    var d = new Date();
+    var curYear = d.getFullYear() + 543;
+    var curDay = d.getUTCDate();
+    var curMonth = d.getMonth();
+
+
+    var dd = moment(curDay + "/" + curMonth + "/" + curYear, "DD/MM/YYYY");
+    var y = moment(curYear, "YYYY");
+    $(function () {
+        $('#datetimepicker1').datetimepicker({
+            format: 'YYYY',
+            defaultDate: y,
+
+        });
+    });
+
+
+</script>
+
+<script>
+    /*jslint unparam: true */
+    /*global window, $ */
+    $(function () {
+        'use strict';
+        // Change this to the location of your server-side upload handler:
+        var url = window.location.hostname === 'blueimp.github.io' ?
+                '//jquery-file-upload.appspot.com/' : 'server/php/';
+        $('#fileupload').fileupload({
+            url: url,
+            dataType: 'json',
+            acceptFileTypes: /\/(pdf)$/i,
+            done: function (e, data) {
+                console.log(data);
+                $.each(data.result.files, function (index, file) {
+
+                    $('<p/>').text(file.name).appendTo('#files');
+                });
+            },
+            progressall: function (e, data) {
+                var progress = parseInt(data.loaded / data.total * 100, 10);
+                $('#progress .progress-bar').css(
+                        'width',
+                        progress + '%'
+                );
+            }
+        }).prop('disabled', !$.support.fileInput)
+                .parent().addClass($.support.fileInput ? undefined : 'disabled');
+    });
+
+
+    $('[data-toggle=confirmation]').confirmation({
+        rootSelector: '[data-toggle=confirmation]',
+        title: "Delete File",
+        content: "คุณแน่ใจหรือไม่ที่ต้องการลบไฟล์นี้",
+        popout: true,
+        singleton: true,
+        onConfirm: function () {
+
+            var $link = $(this);
+            $.ajax({
+                dataType: 'json',
+                url: $link.data('url'),
+                type: 'DELETE',
+                success: function (response) {
+
+                }
+            });
+
+        },
+        buttons: [
+            {
+                class: 'btn btn-primary',
+                icon: 'glyphicon glyphicon-ok',
+                label: 'ตกลง'
+            },
+            {
+                class: 'btn btn-default',
+                icon: 'glyphicon glyphicon-remove',
+                label: 'ยกเลิก',
+                cancel: true
+            }
+        ]
+    });
+
+    $('#delete').on('click', function (e) {
+        console.log(e);
+        e.preventDefault();
+
+        var $link = $(this);
+        console.log($link.data('url'));
+
+        $.ajax({
+            dataType: 'json',
+            url: $link.data('url'),
+            type: 'DELETE',
+            success: function (response) {
+                console.log(response);
+            }
+        });
+
+    });
+
+    function treeview() {
+        var tree = [
+            {
+                text: "คณิตศาสตร์และวิทยาการคอมพิวเตอร์",
+                nodes: [
+                    {
+                        text: 'คณิตศาสตร์',
+                        state: {
+                            expanded: true
+                        },
+                        nodes: [
+                            {
+                                text: '<a href="" class="course">พื้นฐานวิชาชีพสาขาคณิตศาสตร์</a>'
+                            }
+                        ]
+                    }, {
+                        text: 'วิทยาการคอมพิวเตอร์',
+                        state: {
+                            expanded: true,
+                        },
+                        nodes: [
+                            {
+                                text: '<a href="" class="course">วิชาศึกษาทั่วไปสาขาวิทคอม</a>'
+                            }, {
+                                text: '<a href="" class="course">วิทยาการคอมพิวเตอร์</a>'
+                            }, {
+                                text: 'เทคโนโลยีสารสนเทศ'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                text: "ภาควิชาวิทยาศาสตร์",
+                nodes: [
+                    {
+                        text: 'สาขาวิชาเคมี',
+                        state: {
+                            expanded: true,
+                        },
+                        nodes: [
+                            {
+                                text: 'วท.บ. (เคมี)'
+                            }, {
+                                text: 'วท.ม. (วิทยาศาสตร์การวิเคราะห์)'
+                            }, {
+                                text: 'วิชาศึกษาทั่วไป / พื้นฐานวิชาชีพ'
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        var tree2 = [
+            {
+                text:"คณิตศาสตร์และวิทยาการคอมพิวเตอร์",
+                nodes: [
+                    {
+                        text:"คณิตศาสตร์",
+                        state: {
+                            expanded: true
+                        },
+                        nodes: [
+                            {
+                                text: "พื้นฐานวิชาชีพสาขาคณิตศาสตร์"
+                            }
+                        ]
+                    }, {
+                        text:"วิทยาการคอมพิวเตอร์",
+                        state: {
+                            expanded: true
+                        },
+                        nodes: [
+                            {
+                                text:"วิชาศึกษาทั่วไปสาขาวิทคอม"
+                            },
+                            {
+                                text:"วิทยาการคอมพิวเตอร์"
+                            },
+                            {
+                                text:"เทคโนโลยีสารสนเทศ"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        var tree3 = [{
+            text: "คณิตศาสตร์และวิทยาการคอมพิวเตอร์",
+            nodes: [{
+                text: "คณิตศาสตร์",
+                state: {expanded: true},
+                nodes: [{text: "พื้นฐานวิชาชีพสาขาคณิตศาสตร์"}]
+            }, {
+                text: "วิทยาการคอมพิวเตอร์",
+                state: {expanded: true},
+                nodes: [{text: "วิชาศึกษาทั่วไปสาขาวิทคอม"}, {text: "วิทยาการคอมพิวเตอร์"}, {text: "เทคโนโลยีสารสนเทศ"}]
+            }]
+        }];
+
+        return tree3;
+    }
+
+
+</script>
+
+
+<div class="container-fluid">
+    <!--This is a home page.-->
+    <!--<div class="row">-->
+    <!--<div class="col-md-3">-->
+
+    <!--<input type="text" class="form-control" name="country" id="autocomplete"/>-->
+    <!--</div>-->
+
+    <!--</div>-->
+
+
+    <!--<div class="row top-25">-->
+
+    <!--<div class="form-inline" id="addCourse">-->
+    <!--<div class='col-md-2'>-->
+    <!--<div class="form-group">-->
+    <!--<div class='input-group date' id='datetimepicker1'>-->
+    <!--<input type='text' class="form-control"/>-->
+    <!--<span class="input-group-addon">-->
+    <!--<span class="glyphicon glyphicon-calendar"></span>-->
+    <!--</span>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="row top-25">-->
+    <!--<div class="col-md-7">-->
+    <!--<div id="tree"></div>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <h3>Testing Upload</h3>
+    <hr>
+    <div class="row">
+        <div class="col-xs-4">
+            <div class="form-group">
+                <span class="btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i><span>Select files...</span>
+                    <input id="fileupload" type="file" name="files" accept="application/pdf">
+                </span>
+            </div>
+            <div id="progress" class="progress">
+                <div class="progress-bar progress-bar-success"></div>
+            </div>
+        </div>
+    </div>
+
+    <button id="delete" class="btn btn-danger delete" data-toggle="confirmation" data-type="DELETE"
+            data-url="http://localhost/tqf/server/php/index.php?file=6a838deab752360bc92ae41d15a8c5ae.pdf">
+        <i class="glyphicon glyphicon-trash"></i>
+        <span>Delete</span>
+    </button>
+
+    <div id="files" class="files"></div>
+    <a class="btn btn-primary" href="./server/php/files/3ac1736716e4f2bda65a30c48dff085d.pdf" target="blank">
+        <i class="glyphicon glyphicon-file"></i> View PDF</a>
+
+    <a class="btn btn-primary right-10" href="./server/php/files/1f4268d7beaa075af426f92c395fd212.pdf"
+       target="blank"><img src="./images/pdf-icon2.png" height="32" width="28"> View PDF</a>
+
+    <a class="right-10" href="./server/php/files/1f4268d7beaa075af426f92c395fd212.pdf"
+       target="blank"><img src="./images/pdf-icon.jpg" height="49" width="165"></a>
+</div>
+
+<h3>ปี 2559 เทอม 1</h3>
+
+หลักสูตร : วิทยาการคอมพิวเตอร์<br><br>
+
+วิชา: โครงงานทางวิทยาการคอมพิวเตอร์ 1<br>
+ผู้รับผิดชอบวิชา: xxx xxxxx<br>
+
+เวลากำหนดส่ง : 19/9/2559<br>
+เอกสาร มคอ. 3/4 :
+<button>select file</button><br>
+เวลากำหนดส่ง : 19/12/2559<br>
+เอกสาร มคอ. 5/6 :
+<button>select file</button><br><br>
+<table border="1">
+    <thead>
+    <th>กลุ่ม</th>
+    <th>ผู้สอน</th>
+    <th>ไฟล์สรุปการสอน</th>
+    </thead>
+
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>aaa aaa</td>
+        <td>
+            <button>select file</button>
+        </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>bbb bbb</td>
+        <td>
+            <button>select file</button>
+        </td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>ccc ccc</td>
+        <td>
+            <button>select file</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<br><br>
+
+วิชา: ระเบียบวิธีการเขียนโปรแกรม<br>
+ผู้รับผิดชอบวิชา: xxx xxxxx<br>
+
+เวลากำหนดส่ง : 19/9/2559<br>
+เอกสาร มคอ. 3/4 :
+<button>select file</button><br>
+เวลากำหนดส่ง : 19/12/2559<br>
+เอกสาร มคอ. 5/6 :
+<button>select file</button><br><br>
+
+
+<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample"
+        aria-expanded="false" aria-controls="collapseExample">
+    Button with data-target
+</button>
+<div class="collapse in" id="collapseExample">
+    <div class="panel panel-default top-10">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Panel heading</div>
+        <div class="panel-body">
+            sdfsdf
+        </div>
+
+        <!-- Table -->
+        <table class="table">
+            <thead>
+            <th>กลุ่ม</th>
+            <th>ผู้สอน</th>
+            <th>ไฟล์สรุปการสอน</th>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>aaa aaa</td>
+                <td>
+                    <button>select file</button>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>bbb bbb</td>
+                <td>
+                    <button>select file</button>
+                </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>ccc ccc</td>
+                <td>
+                    <button>select file</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+
+    <div class="panel-heading">Panel heading</div>
+
+</div>
+
+
+<a href="#" id="dob" data-type="date" data-pk="1" data-url="/post" data-title="Select date">15/05/1984</a>
+<script>
+
+
+    $(function(){
+        $('#dob').editable({
+            format: 'yyyy-mm-dd',
+            viewformat: 'dd/mm/yyyy',
+            datepicker: {
+                weekStart: 1
+            }
+        });
+    });
+</script>
+
+
+<div class="container">
+    <div class="row">
+        <div class='col-sm-6'>
+            <div class="form-group">
+                <div class='input-group date' data-type="date" id='datetimepicker2'>
+                    <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var d = new Date();
+            var curYear = d.getFullYear() + 543;
+            //    var curDay = d.getUTCDate();
+            //    var curMonth = d.getMonth();
+            var dd = moment(curDay + "/" + curMonth + "/" + curYear, "DD/MM/YYYY");
+
+
+            $(function () {
+                $('#datetimepicker2').datetimepicker({
+                    locale: 'th',
+                    format: 'DD/MMMM/YYYY',
+                    defaultDate: dd
+                });
+            });
+
+            $("#datetimepicker2").on("dp.change", function(e) {
+                console.log("test");
+            });
+
+        </script>
+    </div>
+</div>
+
+

@@ -1,0 +1,537 @@
+<style>
+    thead th {
+        background-color: #f5f5f5;
+
+    }
+
+</style>
+<script>
+    $(document).ready(function () {
+        getCurYear();
+    });
+
+
+    var schoolYear;
+    var schoolYearData;
+    var tqfTableData;
+    var courseDataTable;
+    var courseData;
+    var year;
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                year = response;
+                $("#showYear").html(year);
+                courseTable();
+            }
+        });
+    }
+
+    //โครงของ tqf table เพื่อรอใส่ data โดยการเรียก function tqfTable ต่อ
+    function courseTable() {
+
+        $.when($.ajax({
+            type: 'POST',
+            url: 'tqfFileDAO.php',
+            data: {func: 'getYearTerm', user_id: user.user_id, year: year},
+            dataType: 'json',
+            success: function (response) {
+
+                schoolYearData = response;
+                if(schoolYearData.length == 0){
+                    schoolYearData = "<div class='alert alert-danger top-20' role='alert'>" +
+                            "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span> " +
+                            "<strong>แจ้งเตือน!</strong> ไม่มีข้อมูลหน้าส่งเอกสาร มคอ. ปีการศึกษา "+year+
+                            "</div>";
+                    $("#showTable").html(schoolYearData);
+                }
+            }
+        })).then(function (schoolYearData) {
+
+
+            $.each(schoolYearData, function (i, year) {
+
+                setTimeout(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'tqfFileDAO.php',
+                        data: {func: 'getCourseTqfTable', user_id: user.user_id, year: year.year, term: year.term},
+                        dataType: 'json',
+                        success: function (response) {
+                            courseData = response;
+
+                            var yearTable =
+                                    "<div class='well well-sm top-30'>" +
+                                    "<h4><i class=\"glyphicon glyphicon-calendar\"></i>\u00A0<strong>ภาคเรียน ปี " + year.year + " เทอม " + year.term + "</strong></h4>" +
+                                    "</div>";
+
+                            $("#showTable").append(yearTable);
+
+                            $.each(courseData, function (j, course) {
+                                courseDataTable =
+                                        '<div class="panel panel-info top-35">'+
+
+                                            "<div class=\"panel-heading\" role=\"tab\" id=heading" + i + j + ">" +
+                                                "<h4 class=\"panel-title\">" +
+                                                    "<a class=\"collapsed\" role=\"button\" data-toggle=\"collapse\" data-parent=\"#accordion\"\n  href=#collapse" + i + j +" aria-expanded=\"false\" aria-controls=" + course.course_id + ">" +
+                                                        '<strong>หลักสูตร :\u00A0'+course.course_id+'</strong>' +
+                                                    "</a>" +
+                                                "</h4>" +
+                                            "</div>" +
+
+                                            "<div id=collapse" + i + j + "  class=\"panel-collapse collapse in\" role=\"tabpanel\" aria-labelledby=heading" + i + j +">" +
+
+                                                '<div class="panel-body">'+
+                                                    '<h4>ส่งเอกสาร มคอ. </h4>'+
+                                                    '<div class="top-20"></div>'+
+                                                    "<table id=table" + i + j + " data-id-field=\"faculty_id\">"+
+                                                    '</table>'+
+                                                '</div>' +
+
+                                                '<div class="panel-body">' +
+                                                    '<h4>ส่งเอกสารสรุปผลการสอน</h4>' +
+                                                    '<div class="top-20"></div>'+
+                                                    "<table id=teachingTable" + i + j + " data-id-field=\"faculty_id\">"+
+                                                    "</table>"+
+                                                '</div>'+
+
+                                            "</div>" +
+
+                                        '</div>';
+
+                                $("#showTable").append(courseDataTable);
+                                tqfTable(i, j, year.year, year.term, course.course_id);
+                                teachingTable(i, j, year.year, year.term, course.course_id);
+                            });
+
+                        }
+                    });
+                }, 100*i);
+
+            });
+
+        });
+
+    }
+
+    //re ข้อมูลของ table ใหม่ เมื่อทำการเพิ่มหรือลบข้อมูล
+    function reCourseTable() {
+
+        $.when($.ajax({
+            type: 'POST',
+            url: 'tqfFileDAO.php',
+            data: {func: 'getYearTerm', user_id: user.user_id, year: year},
+            dataType: 'json',
+            success: function (response) {
+                schoolYearData = response;
+            }
+        })).then(function (schoolYearData) {
+
+            $.each(schoolYearData, function (i, year) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'tqfFileDAO.php',
+                    data: {func: 'getCourseTqfTable', user_id: user.user_id, year: year.year, term: year.term},
+                    dataType: 'json',
+                    success: function (response) {
+                        courseData = response;
+                        $.each(courseData, function (j, course) {
+                            tqfTable(i, j, year.year, year.term, course.course_id);
+                            teachingTable(i, j, year.year, year.term, course.course_id);
+                        });
+                    }
+                });
+
+            });
+        });
+    }
+
+    //ข้อมูล คารางไฟล์ มคอ.
+    function tqfTable(indexTable, indexCourse, year, term, course) {
+        $.ajax({
+            type: 'POST',
+            url: 'tqfFileDAO.php',
+            data: {
+                func: 'getTqfFileTable',
+                year: year,
+                term: term,
+                user_id: user.user_id,
+                course_id: course
+            },
+            dataType: 'json',
+            success: function (response) {
+
+                tqfTableData = response;
+                $table = $("#table" + indexTable + indexCourse);
+                $table.bootstrapTable({
+                    columns: [{
+                        field: 'subject_id',
+                        title: 'วิชา',
+                        width: "30%",
+                        formatter: function (value, row) {
+                            return [row.subject_id, row.subject_name].join(' - ');
+                        },
+                        sortable: true
+                    }, {
+                        field: 'responsible_subject',
+                        title: 'ผู้รับผิดชอบรายวิชา',
+                        width: "20%",
+
+                        formatter: function (value, row) {
+                            if (row.name == null) {
+                                return "ไม่มีผู้รับผิดชอบรายวิชา";
+                            } else {
+                                return [row.name, row.surname].join('  ');
+                            }
+                        },
+                        sortable: true
+                    }, {
+                        field: 'pre_file_id',
+                        title: 'เอกสาร มคอ. 3/4 (PDF)',
+                        width: "20%",
+                        formatter: perOperateFormatter,
+                        events: operateEvents
+                    }, {
+                        field: 'post_file_id',
+                        title: 'เอกสาร มคอ. 5/6 (PDF)',
+                        width: "20%",
+                        formatter: postOperateFormatter,
+                        events: operateEvents
+                    }
+                    ]
+                });
+
+                $table.bootstrapTable('load', tqfTableData);
+                checkRemoveTqfFile();
+            }
+        });
+    }
+
+    //ข้อมูล ตารางไฟล์สรุปการสอน
+    function teachingTable(indexTable, indexCourse, year, term, course) {
+        $.ajax({
+            type: 'POST',
+            url: 'tqfFileDAO.php',
+            data: {
+                func: 'getTeachingFileTable',
+                year: year,
+                term: term,
+                course_id: course,
+                user_id: user.user_id
+            },
+            dataType: 'json',
+            success: function (response) {
+                tqfTableData = response;
+                var $teachingTable = $("#teachingTable" + indexTable + indexCourse);
+                if(tqfTableData.length == 0){
+                    $teachingTable.html("-ไม่มีไฟล์สรุปการสอนที่ต้องส่ง");
+                }else{
+                    $teachingTable.bootstrapTable({
+                        groupBy: true,
+                        groupByField: 'subject_name',
+                        columns: [{
+                            field: 'group',
+                            title: 'กลุ่ม',
+                            width: "4%",
+                            align: 'center',
+                            sortable: true,
+                            events: operateEvents
+                        }, {
+                            field: 'teacher_id',
+                            title: 'ผู้สอน',
+                            width: "35%",
+                            formatter: function (value, row) {
+                                return [row.name, row.surname].join('  ');
+                            },
+                            sortable: true
+                        }, {
+                            field: 'file_id',
+                            title: 'ไฟล์สรุปการสอน (DOC)',
+                            width: "80%",
+                            formatter: teachingFileFormatter,
+                            events: operateEvents
+                        }
+                        ]
+                    });
+
+                    $teachingTable.bootstrapTable('load', tqfTableData);
+                    checkRemoveTqfFile();
+                }
+            }
+        });
+    }
+
+    //upload file button ปุ่มอัพโหลดไฟล์สรุปการสอย
+    function teachingFileFormatter(value, row, index) {
+
+        if (row.teacher_id == user.user_id) {
+            if(row.file_id == null){
+                return [
+                    '<span class="btn btn-success fileinput-button">',
+                    '<i class="glyphicon glyphicon-upload"></i> ',
+                    '<span>Upload files</span>',
+                    '<input type="file" class="teachingFileUpload" name="files" accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document">'
+                ].join('');
+            }else {
+                return [
+                    "<a class=\"btn btn-primary right-10\" href=./server/php/files/" + row["file_id"] + " target=\"blank\">",
+                    '<i class="glyphicon glyphicon-download-alt"></i> Download DOC</a>',
+                    "<button class=\"btn btn-danger delete\" data-toggle=\"confirmation\" table=\"teaching_file\" data-type=\"DELETE\" data-url=./server/php/index.php?file=" + row["file_id"] + ">",
+                    '<i class="glyphicon glyphicon-remove"></i> ',
+                    '<span>Delete files</span>',
+                    '</button>'
+                ].join('');
+            }
+        }else if (row.file_id == null) {
+            return [
+                    "<strong><span style='color: red'>ยังไม่ได้ส่ง<span></strong>"
+            ].join('');
+        }else {
+            return [
+                "<a class=\"btn btn-primary right-10\" href=./server/php/files/" + row["file_id"] + " target=\"blank\">",
+                '<i class="glyphicon glyphicon-download-alt"></i> Download DOC</a>'
+            ].join('');
+        }
+    }
+
+    //upload file button ปุ่มอัพโหลดไฟล์ มคอ 3/4
+    function perOperateFormatter(value, row, index) {
+
+        if (value == null) {
+            return [
+                '<span class="btn btn-success fileinput-button">',
+                '<i class="glyphicon glyphicon-upload"></i> ',
+                '<span>Upload files</span>',
+                '<input type="file" class="fileupload" tabindex="0" name="files" accept="application/pdf">'    //tabindex 0 ป็น มคอ 3/4
+            ].join('');
+        } else {
+            return [
+                "<a class=\"btn btn-primary right-10\" href=./server/php/files/" + row["pre_file_id"] + " target=\"blank\">",
+                '<i class="glyphicon glyphicon-download-alt"></i> Download PDF</a>',
+                "<button class=\"btn btn-danger delete\" data-toggle=\"confirmation\" table=\"tqf_file\" data-type=\"DELETE\" data-url=./server/php/index.php?file=" + row["pre_file_id"] + ">",
+                '<i class="glyphicon glyphicon-remove""></i> ',
+                '<span>Delete files</span>',
+                '</button>'
+            ].join('');
+        }
+
+    }
+
+    //upload file button ปุ่มอัพโหลดไฟล์ มคอ 5/6
+    function postOperateFormatter(value, row, index) {
+
+        if (value == null) {
+            return [
+                '<span class="btn btn-success fileinput-button">',
+                '<i class="glyphicon glyphicon-upload"></i> ',
+                '<span>Upload files</span>',
+                '<input type="file" class="fileupload" tabindex="1" name="files" accept="application/pdf">' //tabindex 0 ป็น มคอ 5/6
+            ].join('');
+        } else {
+            return [
+                "<a class=\"btn btn-primary right-10\" href=./server/php/files/" + row["post_file_id"] + " target=\"blank\">",
+                '<i class="glyphicon glyphicon-download-alt"></i> Download PDF</a>',
+                "<button class=\"btn btn-danger delete\" data-toggle=\"confirmation\" table=\"tqf_file\" data-type=\"DELETE\" data-url=./server/php/index.php?file=" + row["post_file_id"] + ">",
+                '<i class="glyphicon glyphicon-remove"></i> ',
+                '<span>Delete files</span>',
+                '</button>'
+            ].join('');
+        }
+
+    }
+
+    //upload file function  ฟังก์ชั่นอัพโหลดไฟล์ มคอ. 3/4/5/6 และไฟล์สรุปการสอน
+    window.operateEvents = {
+        //อัพโหลดไฟล์ มคอ. 3/4/5/6
+        'click .fileupload': function (e, value, row, index) {
+            var tqfIndex = $(this).attr("tabindex");
+
+            var url = window.location.hostname === 'blueimp.github.io' ?
+                    '//jquery-file-upload.appspot.com/' : 'server/php/';
+            $('.fileupload').fileupload({
+                url: url,
+                dataType: 'json',
+                acceptFileTypes: /\/(pdf)$/i,
+                done: function (e, data, index) {
+
+                    $.each(data.result.files, function (index, file) {
+
+//                        $('<p/>').text(file.name).appendTo('#files');
+                        addTqfFile(file.name, row, tqfIndex);
+                        reCourseTable();
+                    });
+                }
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+        },
+        //อัพโหลดไฟล์สรุปการสอน
+        'click .teachingFileUpload': function (e, value, row, index) {
+            console.log("test");
+            var url = window.location.hostname === 'blueimp.github.io' ?
+                    '//jquery-file-upload.appspot.com/' : 'server/php/';
+            $('.teachingFileUpload').fileupload({
+                url: url,
+                dataType: 'json',
+                acceptFileTypes: /\/(vnd.openxmlformats-officedocument.wordprocessingml.document)$/i,
+                done: function (e, data, index) {
+
+                    $.each(data.result.files, function (index, file) {
+
+                        addTeachingFile(file.name, row);
+                        reCourseTable();
+                    });
+                }
+            }).prop('disabled', !$.support.fileInput)
+                    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+        }
+    };
+
+    //ฟังก์ชั่นเพิ่มข้อมูล ไฟล์ มคอ. ลงใน tqf_file Table (DB)
+    function addTqfFile(fileName, data, tqfIndex) {
+
+        $.ajax({
+            type: 'POST',
+            url: 'tqfFileDAO.php',
+            data: {func: 'addTqfFile', file_id: fileName, data: data, user: user.user_id, tqf_index: tqfIndex},
+            dataType: 'json',
+            success: function (response) {
+
+            }
+        })
+    }
+
+    //ฟังก์ชั่นเพิ่มข้อมูล ไฟล์สรุปการสอน ลงใน teaching_file Table (DB)
+    function addTeachingFile(fileName, data) {
+
+        $.ajax({
+            type: 'POST',
+            url: 'tqfFileDAO.php',
+            data: {func: 'addTeachingFile', file_id: fileName, data: data, user: user.user_id},
+            dataType: 'json',
+            success: function (response) {
+
+            }
+        })
+    }
+
+    //ฟังก์ชั่น เช็คลบไฟล์ มคอ .
+    function checkRemoveTqfFile() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            title: "Delete File",
+            content: "คุณแน่ใจหรือไม่ที่จะต้องการลบไฟล์นี้",
+            popout: true,
+            singleton: true,
+            onConfirm: function () {
+                var $link = $(this);
+                var table = $(this).attr('table');
+                $.ajax({
+                    dataType: 'json',
+                    url: $link.data('url'),
+                    type: 'DELETE',
+                    success: function (response) {
+                        var fileId = Object.keys(response);
+                        removeTqfFile(table,fileId[0]);
+                        reCourseTable();
+                    }
+                });
+
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+    //ลบไฟล์ tqf file ที่เป็นตัวไฟล์จริงๆ
+    //    $(document).on('click','.delete' ,function (e) {
+    //        e.preventDefault();
+    //        var $link = $(this);
+    //
+    //        $.ajax({
+    //            dataType: 'json',
+    //            url: $link.data('url'),
+    //            type: 'DELETE',
+    //            success: function (response) {
+    //                var fileId = Object.keys(response);
+    //                removeTqfFile(fileId[0]);
+    //                reCourseTable();
+    //            }
+    //        });
+    //
+    //    });
+
+    //ลบข้อมูล tqf file หรือ teaching file ใน database
+    function removeTqfFile(table , fileName) {
+        $.ajax({
+            type: 'POST',
+            url: 'tqfFileDAO.php',
+            data: {func: 'removeTqfFile', file_id: fileName , table: table},
+            dataType: 'json',
+            success: function () {
+
+            }
+        });
+    }
+
+
+    $("#old").on('click',function () {
+        year--;
+        $("#showYear").html(year);
+        $("#showTable").empty();
+        courseTable();
+
+    });
+
+    $("#new").on('click',function () {
+        year++;
+        $("#showYear").html(year);
+        $("#showTable").empty();
+        courseTable();
+    });
+
+    $("#showYear").on('click',function () {
+        $("#showTable").empty();
+        courseTable();
+    });
+
+</script>
+
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="glyphicon glyphicon-download-alt right-5"></i> หน้าจอส่งเอกสาร มคอ.</h1>
+    </div>
+
+    <div class="top-30"></div>
+    <h3>
+        ปีการศึกษา :
+        <div class="btn-group" role="group" >
+            <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+            <button type="button" id="showYear" class="btn btn-default"></button>
+
+            <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+        </div>
+    </h3>
+
+    <div id="showTable"></div>
+
+</div>

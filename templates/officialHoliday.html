@@ -1,0 +1,557 @@
+<script>
+    $(document).ready(function () {
+        getDate();
+        getCurYear();
+        moment.locale('th');
+        checkRemoveData();
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+"</h3>");
+    });
+
+    var yearId;
+    var $table = $("#table");
+    var holidayData;
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                yearId = response;
+                $("#showYear").html(yearId);
+                getHolidayData();
+            }
+        });
+    }
+
+    //ข้อมูลของ holiday table ที่จะเอามาโชว์ เป็นข้อมูลแบบ json
+    function getHolidayData(){
+        $.ajax({
+            type: 'POST',
+            url: 'officialHolidayDAO.php',
+            data: {func: 'getHoliday' ,year: yearId, faculty_id: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                holidayData = response;
+                getHolidayTable()
+            }
+        });
+    }
+
+    function getHolidayTable(){
+        $table.bootstrapTable({
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },{
+                field: 'date_id',
+                title: 'วันหยุด',
+                width: '275px',
+                formatter: dateFormatter
+            },{
+                field: 'date_name',
+                title: 'ชื่อวันหยุด',
+
+                editable: {
+                    type: 'text',
+                    title: 'กรอกชื่อวันหยุด',
+                    url: 'officialHolidayDAO.php',
+                    params: function func(params) {
+                        params.func = 'updateHoliday';
+                        return params;
+                    },
+                    success: function () {
+                        getHolidayData();
+                    }
+                }
+            }
+            ]
+
+        });
+        $table.bootstrapTable('load', holidayData);
+    }
+
+    //ที่กดแก้ไขวันที่ (icon)
+    var edit = '<a href="" class="pull-right editDate"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>';
+
+    function dateFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('DD/MM/YYYY');
+        return ['<span class="dateDate" tabindex='+index+'>'+val+'</span>',edit].join('');
+    }
+
+    //ข้อมูลเก่า
+    var oldElem;
+    var oldDataDate;
+    var oldTabIndex;
+
+    //ข้อมูลปัจจุบัน
+    var elem;
+    var dataDate;
+    var tabIndex;
+    var dateId;
+
+    //กดแก้ไข้เวลาตรง table
+    $table.on('click',".editDate",function () {
+        elem = $(this).parent();
+        dataDate = $(".dateDate" , $(this).parent()).text();
+        tabIndex = $(".dateDate" , $(this).parent()).attr('tabindex');
+        dateId = "dateIndex"+tabIndex;
+
+
+        var date = "<div class=\"form-inline\">" +
+
+                    "<div class=\"form-group\">" +
+                        "<div class=\"input-group\">" +
+                            "<input type=\"text\" name=\"holiday\" id="+dateId+" class=\"form-control\" required=\"required\" style='width: 120px' >" +
+                            "<span class=\"input-group-addon\">" +
+                            "<i class=\"glyphicon glyphicon-th\"></i>" +
+                            "</span>" +
+                        "</div>"+
+                    "</div>"+
+
+                "<div class=\"form-group pull-right\">" +
+                    "<button type='button' class='btn btn-success submit'><span class='glyphicon glyphicon-ok' aria-hidden='true'></span></button> "+
+                    "<button type='button' class='btn btn-danger cancel'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>"+
+                "</div>"+
+
+                "</div>";
+
+        if(oldDataDate != null){
+            oldElem.html('<span class="dateDate" tabindex='+oldTabIndex+'>'+oldDataDate+'</span>'+edit);
+        }
+
+        oldTabIndex = tabIndex;
+        oldElem  = $(this).parent();
+        oldDataDate = dataDate;
+
+        elem.html(date).hide().fadeIn('fast');
+//        elem.html(date);
+
+        getDateEditing(dateId,dataDate);
+        return false;
+    });
+
+    //กดยกเลิกแก้ไขเวลา ตรง table
+    $table.on('click',".cancel",function () {
+        oldElem = null;
+        oldDataDate = null;
+        oldTabIndex = null;
+
+        elem.html('<span class="dateDate" tabindex='+tabIndex+'>'+dataDate+'</span>'+edit).hide().fadeIn('fast');
+//        elem.html('<span class="dateDate" tabindex='+tabIndex+'>'+dataDate+'</span>'+edit);
+    });
+
+    //กดตกลงเพื่อแก้ไขข้อมูลเวลาใน db
+    $table.on('click',".submit",function () {
+        var newDateData = $("#"+dateId).val();
+
+        if(newDateData == dataDate){
+            oldElem = null;
+            oldDataDate = null;
+            oldTabIndex = null;
+
+//            elem.html('<span class="dateDate" tabindex='+tabIndex+'>'+dataDate+'</span>'+edit);
+            elem.html('<span class="dateDate" tabindex='+tabIndex+'>'+dataDate+'</span>'+edit).hide().fadeIn('fast');
+        }else{
+            $.ajax({
+                type: 'POST',
+                url: 'officialHolidayDAO.php',
+                data: {func: 'updateHoliday' ,pk: dataDate, name: "date_id", value:newDateData ,faculty_id: user.faculty_id},
+                success: function () {
+                    getHolidayData();
+                }
+            });
+        }
+
+    });
+
+    //add holiday
+    $("#addOfficialHoliday").on('click',function () {
+        var data = $("#addHoliday").serialize() + '&' + $.param({func: 'addHoliday' ,faculty_id: user.faculty_id});
+
+        $.ajax({
+            type: 'POST',
+            url: 'officialHolidayDAO.php',
+            data: data,
+            success: function (response) {
+                getHolidayData();
+            }
+        });
+        return false;
+    });
+
+    var $remove = $('#remove');
+
+    //remove Holiday
+    $(document).ready(function () {
+        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        });
+//        $remove.click(function () {
+//            var data = $table.bootstrapTable('getSelections');
+//            $.ajax({
+//                type: 'POST',
+//                url: 'officialHolidayDAO.php',
+//                data: {func: 'removeHoliday', data: data},
+//                success: function () {
+//                    getHolidayData();
+//                }
+//            });
+//            $remove.prop('disabled', true);
+//        });
+    });
+
+    //ฟังก์ชั่น เช็ดลบข้อมูล
+    function checkRemoveData() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบข้อมูล",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้",
+            popout: true,
+            singleton: true,
+            container: 'body',
+            onConfirm: function () {
+                //ลบข้อมูลผ่าน ajax
+
+                //ข้อมูล จาก table ที่ selected จาก checkbox
+                var data = $table.bootstrapTable('getSelections');
+                $.ajax({
+                    type: 'POST',
+                    url: 'officialHolidayDAO.php',
+                    data: {func: 'removeHoliday', data: data},
+                    success: function () {
+                        getHolidayData();
+                    }
+                });
+                $remove.prop('disabled', true);
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+    //remove slot group
+    $(document).on('click', ".removeDate", function () {
+        var id = $(this).attr("tabindex");
+        $("#dateLine"+id).remove();
+        return false;
+    });
+
+    //โชว์วันที่ตอน add holiday
+    function getDate(){
+        $('.date').datepicker({
+            format: 'dd/mm/yyyy',
+            todayBtn: true,
+            todayHighlight: true,
+            autoclose: true,
+            orientation :  "bottom",
+            language: 'th',             //เปลี่ยน label ต่างของ ปฏิทิน ให้เป็น ภาษาไทย   (ต้องใช้ไฟล์ bootstrap-datepicker.th.min.js นี้ด้วย)
+            thaiyear: true              //Set เป็นปี พ.ศ.
+        });  //กำหนดเป็นวันปัจุบัน
+    }
+
+    //โชว์วันที่ตอนแก้ไข table
+    function getDateEditing(dateId,dataDate){
+        var showDate = moment(dataDate, "DD/MM/YYYY").subtract(543,'years').format('DD/MM/YYYY');
+
+        $("#"+dateId).datepicker({
+            format: 'dd/mm/yyyy',
+            todayBtn: true,
+            todayHighlight: true,
+            autoclose: true,
+            orientation :  "bottom",
+            language: 'th',             //เปลี่ยน label ต่างของ ปฏิทิน ให้เป็น ภาษาไทย   (ต้องใช้ไฟล์ bootstrap-datepicker.th.min.js นี้ด้วย)
+            thaiyear: true              //Set เป็นปี พ.ศ.
+        }).datepicker("setDate", showDate);  //กำหนดเป็นวันปัจุบัน
+    }
+
+
+    var indexSlot = 5;
+
+    $("#addHolidaySlot").on('click',function () {
+
+        var dateSlot = "<div class=\"form-inline top-20\" id=dateLine"+indexSlot+">\n" +
+
+                            "<div class=\"form-group\">\n" +
+                                "<label for=Holiday"+indexSlot+">"+(indexSlot+1)+". วัน : </label>\n" +
+                                    "<div class=\"input-group date\">\n" +
+                                        "<input type=\"text\" name=\"holiday[]\" id=Holiday"+indexSlot+" class=\"form-control\" required=\"required\" placeholder=\"วว/ดด/ปปปป\">\n            " +
+                                            "<span class=\"input-group-addon\">\n" +
+                                                "<i class=\"glyphicon glyphicon-th\"></i>\n" +
+                                            "</span>\n" +
+                                        "</div>\n    " +
+                                    "</div>\n\n    " +
+
+                            "<div class=\"form-group left-20\">\n" +
+                                "<label for=HolidayName"+indexSlot+">ชื่อวันหยุด : </label>\n" +
+                                "<input type=\"text\" class=\"form-control\" name=\"holidayName[]\" id=HolidayName"+indexSlot+" placeholder=\"ชื่อวันหยุดราชการ\" required=\"required\" style=\"width: 300px\">\n    " +
+                            "</div>\n\n    " +
+
+                            "<div class=\"form-group\">\n        " +
+                                "<button class=\"btn btn-danger left-20 removeDate\" tabindex="+indexSlot+">\n            " +
+                                    "<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span> ลบวันที่\n        " +
+                                "</button>\n    " +
+                            "</div>\n" +
+
+                        "</div>";
+
+//        $("#showSlot").before(dateSlot);
+        $("#showSlot").before($(dateSlot).hide().fadeIn('fast'));
+        getDate();
+        indexSlot++;
+        return false;
+    });
+
+    //ลดปี
+    $("#old").on('click',function () {
+        yearId--;
+        $("#showYear").html(yearId);
+        getHolidayData();
+    });
+
+    //เพิ่มปี
+    $("#new").on('click',function () {
+        yearId++;
+        $("#showYear").html(yearId);
+        getHolidayData();
+    });
+
+    //ปีปัจจุบัน
+    $("#showYear").on('click',function () {
+        getHolidayData();
+    });
+
+</script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-calendar-plus-o right-5" aria-hidden="true"></i> วันหยุดราชการ</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ค่าพื้นฐานของระบบ</li>
+                <li class="active">วันหยุดราชการ</li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="showDetail"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default top-20">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <i class="fa fa-plus" aria-hidden="true"></i> <strong>เพิ่มวันหยุดราชการ</strong>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+
+                        <form class="top-10" id="addHoliday">
+
+                            <!--1-->
+                            <div class="form-inline" id="dateLine0">
+                                <div class="form-group">
+                                    <label for="Holiday0">1. วัน : </label>
+                                    <div class="input-group date">
+                                        <input type="text" name="holiday[]" id="Holiday0" class="form-control" required="required" placeholder="วว/ดด/ปปปป">
+                                        <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-th"></i>
+                                </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group left-20">
+                                    <label for="HolidayName0">ชื่อวันหยุด : </label>
+                                    <input type="text" class="form-control" name="holidayName[]" id="HolidayName0" placeholder="ชื่อวันหยุดราชการ" required="required" style="width: 300px">
+                                </div>
+
+
+                                <div class="form-group left-20">
+                                    <button class="btn btn-primary" id="addHolidaySlot">
+                                        <span class="glyphicon glyphicon-plus-sign" aria-hidden="true" placeholder="วว/ดด/ปปปป"></span> เพิ่มวันที่
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!--2-->
+                            <div class="form-inline top-20" id="dateLine1">
+                                <div class="form-group">
+                                    <label for="Holiday1">2. วัน : </label>
+                                    <div class="input-group date">
+                                        <input type="text" name="holiday[]" id="Holiday1" class="form-control" required="required" placeholder="วว/ดด/ปปปป">
+                                        <span class="input-group-addon">
+                                        <i class="glyphicon glyphicon-th"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group left-20">
+                                    <label for="HolidayName1">ชื่อวันหยุด : </label>
+                                    <input type="text" class="form-control" name="holidayName[]" id="HolidayName1" placeholder="ชื่อวันหยุดราชการ" required="required" style="width: 300px">
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-danger left-20 removeDate" tabindex="1">
+                                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบวันที่
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!--3-->
+                            <div class="form-inline top-20" id="dateLine2">
+                                <div class="form-group">
+                                    <label for="Holiday2">3. วัน : </label>
+                                    <div class="input-group date">
+                                        <input type="text" name="holiday[]" id="Holiday2" class="form-control" required="required" placeholder="วว/ดด/ปปปป">
+                                        <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-th"></i>
+                                </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group left-20">
+                                    <label for="HolidayName2">ชื่อวันหยุด : </label>
+                                    <input type="text" class="form-control" name="holidayName[]" id="HolidayName2" placeholder="ชื่อวันหยุดราชการ" required="required" style="width: 300px">
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-danger left-20 removeDate" tabindex="2">
+                                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบวันที่
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!--4-->
+                            <div class="form-inline top-20" id="dateLine3">
+                                <div class="form-group">
+                                    <label for="Holiday3">4. วัน : </label>
+                                    <div class="input-group date">
+                                        <input type="text" name="holiday[]" id="Holiday3" class="form-control" required="required" placeholder="วว/ดด/ปปปป">
+                                        <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-th"></i>
+                                </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group left-20">
+                                    <label for="HolidayName3">ชื่อวันหยุด : </label>
+                                    <input type="text" class="form-control" name="holidayName[]" id="HolidayName3" placeholder="ชื่อวันหยุดราชการ" required="required" style="width: 300px">
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-danger left-20 removeDate" tabindex="3">
+                                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบวันที่
+                                    </button>
+                                </div>
+
+                            </div>
+
+                            <!--5-->
+                            <div class="form-inline top-20" id="dateLine4">
+                                <div class="form-group">
+                                    <label for="Holiday4">5. วัน : </label>
+                                    <div class="input-group date">
+                                        <input type="text" name="holiday[]" id="Holiday4" class="form-control" required="required" placeholder="วว/ดด/ปปปป">
+                                        <span class="input-group-addon">
+                                    <i class="glyphicon glyphicon-th"></i>
+                                </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group left-20">
+                                    <label for="HolidayName4">ชื่อวันหยุด : </label>
+                                    <input type="text" class="form-control" name="holidayName[]" id="HolidayName4" placeholder="ชื่อวันหยุดราชการ" required="required" style="width: 300px">
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-danger left-20 removeDate" tabindex="4">
+                                        <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบวันที่
+                                    </button>
+                                </div>
+                            </div>
+
+                            <hr id="showSlot">
+                            <div class="row">
+                                <!--add subject-->
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary pull-right" id="addOfficialHoliday">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> บันทึกข้อมูล
+                                    </button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12 top-10">
+            <h4>
+                ปีการศึกษา :
+                <div class="btn-group" role="group">
+                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+                    <button type="button" id="showYear" class="btn btn-default"></button>
+
+                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                </div>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div id="toolbar">
+                <button id="remove" class="btn btn-danger" data-toggle="confirmation" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> ลบข้อมูล
+                </button>
+            </div>
+
+            <table id="table"
+                   data-toolbar="#toolbar"
+                   data-id-field="date_id"
+                   data-pagination="true"
+                   data-search="true"
+                   data-show-pagination-switch="true"
+                   data-show-columns="true"
+                   data-page-size="15"
+                   data-page-list="[15, 30, 50, 100]"
+            >
+
+            </table>
+        </div>
+    </div>
+
+    <div class="top-40"></div>
+
+
+
+
+</div>

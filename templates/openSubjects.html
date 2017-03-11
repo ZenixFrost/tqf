@@ -1,0 +1,957 @@
+<style>
+    .selectWidth {
+        width: 250px;
+    }
+
+</style>
+<script>
+    $(document).ready(function () {
+        getCurYear();
+        checkRemoveData();
+        $("#showDetail").append("<h3>สาขา : "+user.major_id+"</h3>");
+    });
+
+    var $courseSelect = $("#courseSelect");
+    var courseData;
+    var CourseSelected;
+    var subjects;
+    var teacherData;
+    var subjectSelect;
+    var teacherSelect;
+
+    var courseId;
+    var yearId;
+    var termId;
+
+    var year;
+
+    ///////////////////////////////////////////////////////////เพิ่มข้อมูล กลุ่มวิชา//////////////////////////////////////////
+
+
+    //Select course ตอนที่ add open subjects
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                yearId = response;
+                year = response;
+                $("#showYear").html(yearId);
+
+                var y = moment(yearId, "YYYY");
+                $('#year').datetimepicker({
+                    allowInputToggle: true,
+                    format: 'YYYY',
+                    defaultDate: y
+                });
+
+                getSelectCourse();
+            }
+        });
+    }
+
+    //
+    function getSelectCourse() {
+        $.ajax({
+            type: 'POST',
+            url: 'subjectDAO.php',
+            data: {func: 'getSelectCourse', userId: user.user_id},
+            dataType: 'json',
+            success: function (response) {
+                courseData = response;
+
+                var select = "";
+                var courseRadioBtn = " หลักสูตร : ";
+                $.each(courseData, function (i, course) {
+                    select += "<option value=" + course.course_id + ">" + course.course_id + "</option>";
+                    if(i == 0){
+                        courseRadioBtn += "<label class=\"radio-inline\"><input type=\"radio\" name=courseTable class='courseRadioBtn' value="+course.course_id+" checked >"+course.course_id+"</label> ";
+                    }else{
+                        courseRadioBtn += "<label class=\"radio-inline\"><input type=\"radio\" name=courseTable class='courseRadioBtn' value="+course.course_id+">"+course.course_id+"</label> ";
+                    }
+                });
+
+                $courseSelect.html(select);
+                $courseSelect.selectpicker('refresh');
+                CourseSelected = $courseSelect.val();
+                getSelectSubject();
+
+                courseId = $("#courseSelect").val();
+                termId = $("#term").val();
+
+                $("#showRadioBtn").html(courseRadioBtn);
+
+                getSubjectDataTable();
+            }
+        });
+    }
+
+    //เปลี่ยยน subject_id ตอน select course (เปลี่ยนวิชาตอนที่เลือกหลักสูตร ตรงที่บันทึกข้อมูล)
+    $(document).ready(function () {
+        $courseSelect.on('change', function () {
+            CourseSelected = $courseSelect.val();
+            getSelectSubject();
+        });
+    });
+
+    //drop down เลือกวิชาจากตรงที่ เพิ่มข้อมูล
+    function getSelectSubject() {
+        $.ajax({
+            type: 'POST',
+            url: 'openSubjectsDAO.php',
+            data: {func: 'getSubjects', CourseSelected: CourseSelected},
+            dataType: 'json',
+            success: function (response) {
+                subjects = response;
+                subjectSelect = "";
+                $.each(subjects, function (i, subject) {
+                    subjectSelect += "<option value=" + subject.subject_id + ">" + subject.subject_id + " - " + subject.subject_name + "</option>";
+                });
+
+                for (var i = 0; i < subjectsNum; i++) {
+                    $("#subjects" + i).html(subjectSelect).selectpicker('refresh');
+                }
+                getTeacherSelect();
+            }
+        });
+    }
+
+    //add open subjects เพิ่มกลุ่มเรียน (บันทึกข้อมูลลง DB)
+    $("#addOpenSubjects").on('click', function () {
+        var data = $("#openSubjectsData").serialize() + '&' + $.param({func: 'addOpenSubjects'});
+
+//        var data = $("#openSubjectsData").serializeArray();
+//        data.func = 'addOpenSubjects';
+
+//        console.log($("#yearSelect").val());
+//        console.log($("#term").val());
+//        console.log($("#courseSelect").val());
+
+
+//        console.log(test);
+//        console.log(num.length);
+
+
+        $.ajax({
+            type: 'POST',
+            url: 'openSubjectsDAO.php',
+            data: data,
+            dataType: 'html',
+            success: function (response) {
+//                   CourseSelected = $courseSelect.val();
+                getSubjectDataTable();
+            }
+        });
+        return false;
+    });
+
+    //select ผู้สอน
+    function getTeacherSelect() {
+        $.ajax({
+            type: 'POST',
+            url: 'openSubjectsDAO.php',
+            data: {func: 'getTeacher'},
+            dataType: 'json',
+            success: function (response) {
+                teacherData = response;
+                teacherSelect = "";
+                $.each(teacherData, function (i, teacher) {
+                    teacherSelect += "<option value=" + teacher.user_id + ">" + teacher.name + " " + teacher.surname + "</option>";
+                });
+
+                for (var i = 0; i < groupNum; i++) {
+                    $("#teacher" + i).html(teacherSelect).selectpicker('refresh');
+                }
+            }
+        });
+    }
+
+    var groupNum = 3;
+    var num = [];   //ตัวเลขกลุ่มของแต่ละช่องวิชา
+    var subjectsNum = 1;
+    num[0] = 3;
+
+    //add group slot เพิ่มช่องกลุ่มเรียน
+    $("#openSubjectsData").on('click',".addGroup", function () {
+        var id = $(this).attr("id");
+        var $show = $("#show" + id);
+        var groupId = "group" + groupNum;
+        var groupName = "group[" + id + "][]";
+        var teacherId = "teacher" + groupNum;
+        var teacherName = "teacher[" + id + "]["+num[id]+"][]";
+        var groupIndex = "groupIndex["+id+"][]";
+        var group =
+                "<div class=\"form-inline top-20 left-70\" id=groupLine"+groupNum+">" +
+
+                    "<div class=\"form-group \">" +
+                        "<label for=" + groupId + ">กลุ่ม :\u00A0</label>" +
+                        "<input type=\"number\" class=\"form-control\" name=" + groupName + " id=" + groupId + " min=\"0\" max=\"99\" value="+(num[id]+1)+">" +
+                    "</div>" +
+
+                    "<div class=\"form-group left-20\">" +
+                        "<label for=" + teacherId + ">\u00A0อาจารย์ผู้สอน :\u00A0</label>" +
+                        "<select class=\"selectpicker teacher\" multiple name=" + teacherName + " id=" + teacherId + " data-live-search=\"true\" title=\"เลือกอาจารย์ผู้สอน\" data-width=\"230px\" data-size=\"10\">" +
+                            teacherSelect +
+                        "</select>" +
+                    "</div>\u00A0" +
+
+                    "<div class=\"form-group\">"+
+                        "<button class=\"btn btn-danger left-20 removeGroup\" tabindex="+groupNum+">"+
+                        "<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span> ลบกลุ่ม"+
+                        "</button>"+
+                    "</div>"+
+
+                    "<input type=\"hidden\" name="+groupIndex+" value="+num[id]+">"+
+
+                "</div>";
+//        $show.before(group);
+        $show.before($(group).hide().fadeIn('fast'));
+        $('#teacher' + groupNum).selectpicker('render');
+        num[id]++;
+        groupNum++;
+        return false;
+    });
+
+    //remove slot group
+    $(document).on('click', ".removeGroup", function () {
+        var id = $(this).attr("tabindex");
+        $("#groupLine"+id).remove();
+        return false;
+    });
+
+    //add subjects slot เพิ่มช่องวิชา
+    $(document).ready(function () {
+        $("#addSubjects").on('click', function () {
+            var subjectId = "subjects" + subjectsNum;
+            var subjectName = "subjects[" + subjectsNum + "]";
+            var showId = "show" + subjectsNum;
+            var $show = $("#show" + (subjectsNum - 1));
+
+            num[subjectsNum] = 0;
+
+            var subjects =
+                    "<div class=\"form-inline top-25 left-30\">" +
+
+                    "<div class=\"form-group \">" +
+                        "<label for=" + subjectId + ">วิชา :\u00A0</label>" +
+                        "<select class=\"selectpicker\" name=" + subjectName + " id=" + subjectId + " data-live-search=\"true\" title=\"เลือกวิชา\" data-width=\"auto\" data-size=\"10\">" +
+                                subjectSelect +
+                        "</select>" +
+                    "</div>" +
+
+                    "<div class=\"form-group \">" +
+                        "<button class=\"btn btn-primary left-20 addGroup\" id=" + subjectsNum + ">" +
+                            "<span class=\"glyphicon glyphicon-plus-sign\" aria-hidden=\"true\"></span> เพิ่มกลุ่ม" +
+                        "</button>" +
+                    "</div>" +
+
+                    "</div>" +
+                    "<hr id=" + showId + ">";
+//            $show.after(subjects);
+            $show.after($(subjects).hide().fadeIn('fast'));
+            $("#subjects" + subjectsNum).selectpicker('render');
+
+            for (var i=0;i<=2;i++) {
+                var $showGroup = $("#show" + subjectsNum);
+                var groupId = "group" + groupNum;
+                var groupName = "group[" + subjectsNum + "][]";
+                var teacherId = "teacher" + groupNum;
+                var teacherName = "teacher[" + subjectsNum + "]["+num[subjectsNum]+"][]";
+                var groupIndex = "groupIndex["+subjectsNum+"][]";
+
+                var group =
+                        "<div class=\"form-inline top-20 left-70\" id=groupLine"+groupNum+">" +
+
+                            "<div class=\"form-group \">" +
+                                "<label for=" + groupId + ">กลุ่ม :\u00A0</label>" +
+                                "<input type=\"number\" class=\"form-control\" name=" + groupName + " id=" + groupId + " min=\"0\" max=\"99\" value="+(num[subjectsNum]+1)+">" +
+                            "</div>" +
+
+                            "<div class=\"form-group left-20\">" +
+                                "<label for=" + teacherId + ">\u00A0อาจารย์ผู้สอน :\u00A0</label>" +
+                                "<select class=\"selectpicker teacher\" multiple name=" + teacherName + " id=" + teacherId + " data-live-search=\"true\" title=\"เลือกอาจารย์ผู้สอน\" data-width=\"230px\" data-size=\"10\">" +
+                                    teacherSelect +
+                                "</select>" +
+                            "</div>\u00A0" +
+
+                            "<div class=\"form-group\">"+
+                                "<button class=\"btn btn-danger left-20 removeGroup\" tabindex="+groupNum+">"+
+                                    "<span class=\"glyphicon glyphicon-minus-sign\" aria-hidden=\"true\"></span> ลบกลุ่ม"+
+                                "</button>"+
+                            "</div>"+
+
+                            "<input type=\"hidden\" name="+groupIndex+" value="+num[subjectsNum]+">"+
+
+                        "</div>";
+
+                $showGroup.before($(group).hide().fadeIn('fast'));
+                $('#teacher' + groupNum).selectpicker('render');
+                num[subjectsNum]++;
+                groupNum++;
+            }
+
+            subjectsNum++;
+            return false;
+        });
+    });
+
+
+
+    ////////////////////////////////////////////////////////openSubjects table///////////////////////////////////////////
+
+    var courseDataTable;
+    var teacherDataTable = [];
+    var $table = $("#subjectTable");
+    var $remove = $("#remove");
+
+    //ข้อมูลของ open subjects table เป็น json
+    function getSubjectDataTable() {
+        $.ajax({
+            type: 'POST',
+            url: 'openSubjectsDAO.php',
+            data: {func: 'getOpenSubjectsTerm', course: courseId ,year: yearId ,term:termId},
+            dataType: 'json',
+            success: function (response) {
+                courseDataTable = response;
+                getTeacher();
+            }
+        });
+    }
+
+    function getTeacher() {
+        $.ajax({
+            type: 'POST',
+            url: 'openSubjectsDAO.php',
+            data: {func: 'getTeacher'},
+            dataType: 'json',
+            success: function (response) {
+                teacherDataTable = [];
+                $.each(response,function (i,teacher) {
+                    teacherDataTable.push({
+                        id: teacher.user_id,
+                        text: teacher.name+" "+teacher.surname
+                    });
+                });
+                subjectsTable();
+            }
+        });
+    }
+
+    var tableIndex = 0;
+    var tableYear;
+    var tableTerm;
+    var tableSubjectId;
+    var responsibleData;
+
+
+    //open subject table ใช้ใส่ data ใน table และ  x-editable ตอนที่ select ผู้รับผิดชอบรายวิชา
+    function subjectsTable() {
+        tableIndex = 0;
+
+        $table.bootstrapTable({
+            columns: [{
+                field: 'state',
+                checkbox: true,
+                width: "2%"
+            },{
+                field: 'course_id',
+                title: 'หลักสูตร',
+                width: "20%",
+                formatter: courseFormatter
+            },{
+                field: 'term',
+                title: 'ภาคเรียน',
+                width: "1%",
+                align: 'center',
+                formatter: termFormatter
+            },{
+                field: 'subject_id',
+                title: 'วิชา',
+                width: "20%",
+                formatter: subjectFormatter
+            }, {
+                field: 'responsible_subject',
+                title: 'ผู้รับผิดชอบรายวิชา',
+                width: "15%",
+                editable: {
+                    type: 'select2',
+                    title: 'เลือกผู้รับผิดชอบรายวิชา',
+                    url: 'openSubjectsDAO.php',
+                    emptytext: 'ไม่มีผู้รับผิดชอบรายวิชา',
+                    inputclass: 'selectWidth',
+                    display: function(value, sourceData)
+                    {
+                        if(tableIndex >= 1 && courseDataTable[tableIndex-1].subject_id == courseDataTable[tableIndex].subject_id && courseDataTable[tableIndex].term == courseDataTable[tableIndex-1].term){
+                            $(this).remove();
+                        }else{
+                            if(value == null){
+                                $(this).html();
+                            }else{
+                                $(this).html(courseDataTable[tableIndex].responsible_name+ " " + courseDataTable[tableIndex].responsible_surname);
+                            }
+                        }
+                        tableIndex++;
+                        if(tableIndex == courseDataTable.length){
+                            tableIndex = 0;
+                        }
+                    },
+                    source: function () {
+                        tableYear = courseDataTable[tableIndex].year;
+                        tableTerm = courseDataTable[tableIndex].term;
+                        tableSubjectId = courseDataTable[tableIndex].subject_id;
+                        var data = [];
+
+                        $.when($.ajax({
+                            type: 'POST',
+                            url: 'openSubjectsDAO.php',
+                            data: {func: 'getResponsible',course: courseId, year: tableYear, term: tableTerm, subject_id: tableSubjectId},
+                            dataType: 'json',
+                            success: function (response) {
+                                responsibleData = response;
+                            }
+                        })).then(function () {
+                            $.each(responsibleData, function (i, user) {
+                                data.push({
+                                    id: user.id,
+                                    text: user.text
+                                });
+                            });
+                        });
+
+                        return data;
+                    },
+                    params: function func(params) {
+                        getPk(params);
+                        params.func = 'updateResponsible';
+                        return params;
+                    },
+                    success: function () {
+                        getSubjectDataTable();
+                    }
+                }
+            },{
+                field: 'group',
+                title: 'กลุ่ม',
+                width: "3%",
+                align: 'center',
+                formatter: groupFormatter
+            },{
+                field: 'teacher_id',
+                title: 'ผู้สอน',
+                width: "25%",
+                editable: {
+                    type: 'select2',
+                    title: 'เลือกผู้สอน',
+                    url: 'openSubjectsDAO.php',
+                    emptytext: 'ไม่มีผู้สอน',
+                    inputclass: 'selectWidth',
+                    source: teacherDataTable,
+                    params: function func(params) {
+                        getPk(params);
+                        params.func = 'updateTeacher';
+                        return params;
+                    },
+                    success: function () {
+                        getSubjectDataTable();
+                    }
+                }
+            }
+            ]
+        });
+        $table.bootstrapTable('load', courseDataTable);
+    }
+
+    //หาค่า PK subject_id และ course_id
+    function getPk(params) {
+        var data = $('#subjectTable').bootstrapTable('getData');
+        $.each(data, function (i, subject) {
+            if (params.pk == subject.index) {
+                params.course = subject.course_id;
+                params.year = subject.year;
+                params.term = subject.term;
+                params.subject_id = subject.subject_id;
+                params.group = subject.group;
+                params.teacher_id = subject.teacher_id;
+            }
+        });
+        return params;
+    }
+
+    var term;
+    var subject;
+    var course;
+    var groupFormat;
+
+    //format ของสาขาวิชา major ที่จะโชว์แค่อันแรก
+    function courseFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && course == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        course = value;
+        return [ val ].join('');
+    }
+
+    //format ของภาควิชา sector ที่จะโชว์แค่อันแรก
+    function termFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && term == value){
+            val = "";
+        }else{
+            val = value+"/"+row["year"];
+        }
+
+        term = value;
+        return [val].join('');
+
+    }
+
+    function subjectFormatter(value, row, index){
+        var val;
+
+        if(index >= 1 && subject == value && courseDataTable[index].term == courseDataTable[index-1].term){
+            val = "";
+        }else{
+            val = value+" - "+row["subject_name"];
+        }
+
+        subject = value;
+        return [val].join(' - ');
+    }
+
+    function groupFormatter(value, row, index){
+        var val;
+
+        if(index >= 1 && groupFormat == value && courseDataTable[index].subject_id == courseDataTable[index-1].subject_id){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        groupFormat = value;
+        return [val].join(' - ');
+
+    }
+
+    //remove open subjects table
+    $(document).ready(function () {
+        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        });
+//        $remove.click(function () {
+//            var data = $table.bootstrapTable('getSelections');
+//            $.ajax({
+//                type: 'POST',
+//                url: 'openSubjectsDAO.php',
+//                data: {func: 'removeOpenSubjects', data: data, courseId: courseId},
+//                success: function () {
+//                    getSubjectDataTable();
+//                }
+//            });
+//            $remove.prop('disabled', true);
+//        });
+    });
+
+    //ฟังก์ชั่น เช็ดลบข้อมูล
+    function checkRemoveData() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบข้อมูล",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้",
+            popout: true,
+            singleton: true,
+            container: 'body',
+            onConfirm: function () {
+                //ลบข้อมูลผ่าน ajax
+
+                //ข้อมูล จาก table ที่ selected จาก checkbox
+                var data = $table.bootstrapTable('getSelections');
+                $.ajax({
+                    type: 'POST',
+                    url: 'openSubjectsDAO.php',
+                    data: {func: 'removeOpenSubjects', data: data, courseId: courseId},
+                    success: function () {
+                        getSubjectDataTable();
+                    }
+                });
+                $remove.prop('disabled', true);
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+
+    //////////เปลี่ยนข้อมูลที่โชว์ตรง table ตรงที่บันทึกข้อมูล//////////
+
+    //เปลี่ยนปีแล้วขึ้นข้อมูล จากตรงที่บันทึกข้อมูล open subject
+    $("#year").on("dp.change",function () {
+        yearId = $("#yearSelect").val();
+        year =   moment(yearId, "YYYY").format('YYYY');
+        $("#showYear").html(year);
+        getSubjectDataTable();
+        return false;
+    });
+
+    //เปลี่ยนเทอมแล้วขึ้นข้อมูล จากตรงที่บันทึกข้อมูล open subject
+    $("#term").on("change",function () {
+        termId = $("#term").val();
+        $("#showTermRadioBtn input[value="+termId+"]").prop("checked", true );
+        getSubjectDataTable();
+        return false;
+    });
+
+    //เปลี่ยนหลักสูตรแล้วขึ้นข้อมูล จากตรงที่บันทึกข้อมูล open subject
+    $courseSelect.on("change",function () {
+        courseId = $courseSelect.val();
+        $("#showRadioBtn input[value="+courseId+"]").prop("checked", true );
+        getSubjectDataTable();
+        return false;
+    });
+
+
+
+    //////////เปลี่ยนข้อมูลที่โชว์ตรง table (ที่กดเปลี่ยนข้างล่าง)//////////
+
+
+    //ลดปี
+    $("#old").on('click',function () {
+        year--;
+        yearId = year;
+        $("#showYear").html(year);
+        getSubjectDataTable();
+
+    });
+
+    //เพิ่มปี
+    $("#new").on('click',function () {
+        year++;
+        yearId = year;
+        $("#showYear").html(year);
+        getSubjectDataTable();
+    });
+
+    //กดรีปีใหม่
+    $("#showYear").on('click',function () {
+        getSubjectDataTable();
+    });
+
+
+    //กดเปลี่ยน term จาก radio button เพิ่มเทอม
+    $(document).on('change',".termRadioBtn",function () {
+        termId = $(".termRadioBtn:checked").val();
+        getSubjectDataTable();
+    });
+
+
+    //กดเปลี่ยน course จาก radio button
+    $(document).on('change',".courseRadioBtn",function () {
+        courseId = $(".courseRadioBtn:checked").val();
+        getSubjectDataTable();
+    });
+
+
+</script>
+
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="fa fa-book right-5" aria-hidden="true"></i> กลุ่มเรียนวิชา</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">กำหนดวิชาและกลุ่มเรียน</li>
+                <li class="active">กลุ่มเรียนวิชา</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="panel panel-default top-20">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fa fa-plus" aria-hidden="true"></i> <strong>เพิ่มกลุ่มเรียนวิชา</strong>
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+
+                <form id="openSubjectsData">
+
+                    <!--row year term-->
+                    <div class="form-inline ">
+
+                        <div class="form-group">
+                            <label for="year">ปี : </label>
+                            <div class='input-group date' id="year">
+                                <input type='text' class="form-control" name="year" id="yearSelect"/>
+                                <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group left-20">
+                            <label for="term">เทอม : </label>
+                            <input type="number" class="form-control" id="term" name="term" min="1" max="3" value="1">
+                        </div>
+
+                        <div class="form-group left-20">
+                            <label for="courseSelect">หลักสูตร : </label>
+                            <select class="selectpicker" name="course" id="courseSelect" data-live-search="true" data-width="auto">
+
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!--subject-->
+                    <div class="form-inline top-25 left-30">
+
+                        <div class="form-group ">
+                            <label for="subjects0">วิชา : </label>
+                            <select class="selectpicker" name="subjects[0]" id="subjects0" data-live-search="true" title="เลือกวิชา"
+                                    data-width="auto" data-size="10">
+
+                            </select>
+                        </div>
+
+                        <div class="form-group ">
+                            <button class="btn btn-primary left-20 addGroup" id="0">
+                                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> เพิ่มกลุ่ม
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!--1-->
+                    <div class="form-inline top-20 left-70" id="groupLine0">
+
+                        <div class="form-group">
+                            <label for="group0">กลุ่ม : </label>
+                            <input type="number" class="form-control" name="group[0][]" id="group0" min="0" max="99" value="1">
+                        </div>
+
+                        <div class="form-group left-20">
+                            <label for="teacher0">อาจารย์ผู้สอน : </label>
+                            <select class="selectpicker teacher" multiple name="teacher[0][0][]" id="teacher0" data-live-search="true"
+                                    title="เลือกอาจารย์ผู้สอน" data-width="230px" data-size="10">
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-danger left-20 removeGroup" tabindex="0">
+                                <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบกลุ่ม
+                            </button>
+                        </div>
+
+                        <input type="hidden" name="groupIndex[0][]" value="0">
+
+                    </div>
+
+                    <!--2-->
+                    <div class="form-inline top-15 left-70" id="groupLine1">
+
+                        <div class="form-group">
+                            <label for="group1">กลุ่ม : </label>
+                            <input type="number" class="form-control" name="group[0][]" id="group1" min="0" max="99" value="2">
+                        </div>
+
+                        <div class="form-group left-20">
+                            <label for="teacher1">อาจารย์ผู้สอน : </label>
+                            <select class="selectpicker teacher" multiple name="teacher[0][1][]" id="teacher1" data-live-search="true"
+                                    title="เลือกอาจารย์ผู้สอน" data-width="230px" data-size="10">
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-danger left-20 removeGroup" tabindex="1">
+                                <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบกลุ่ม
+                            </button>
+                        </div>
+
+                        <input type="hidden" name="groupIndex[0][]" value="1">
+
+
+                    </div>
+
+                    <!--3-->
+                    <div class="form-inline top-15 left-70" id="groupLine2">
+
+                        <div class="form-group">
+                            <label for="group2">กลุ่ม : </label>
+                            <input type="number" class="form-control" name="group[0][]" id="group2" min="0" max="99" value="3">
+                        </div>
+
+                        <div class="form-group left-20">
+                            <label for="teacher2">อาจารย์ผู้สอน : </label>
+                            <select class="selectpicker teacher" multiple name="teacher[0][2][]" id="teacher2" data-live-search="true"
+                                    title="เลือกอาจารย์ผู้สอน" data-width="230px" data-size="10">
+
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <button class="btn btn-danger left-20 removeGroup" tabindex="2">
+                                <span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบกลุ่ม
+                            </button>
+                        </div>
+
+                        <input type="hidden" name="groupIndex[0][]" value="2">
+
+
+                    </div>
+
+                    <!--4-->
+                    <!--<div class="form-inline top-15 left-70" id="groupLine3">-->
+
+                        <!--<div class="form-group ">-->
+                            <!--<label for="group3">กลุ่ม : </label>-->
+                            <!--<input type="number" class="form-control" name="group[0][]" id="group3" min="0" max="99" value="4">-->
+                        <!--</div>-->
+
+                        <!--<div class="form-group left-20">-->
+                            <!--<label for="teacher3">อาจารย์ผู้สอน : </label>-->
+                            <!--<select class="selectpicker teacher" name="teacher[0][]" id="teacher3" data-live-search="true"-->
+                                    <!--title="เลือกอาจารย์ผู้สอน" data-width="230px" data-size="10">-->
+
+                            <!--</select>-->
+                        <!--</div>-->
+
+                        <!--<div class="form-group">-->
+                            <!--<button class="btn btn-danger left-20 removeGroup" tabindex="3">-->
+                                <!--<span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบกลุ่ม-->
+                            <!--</button>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+
+                    <!--5-->
+                    <!--<div class="form-inline top-15 left-70" id="groupLine4">-->
+
+                        <!--<div class="form-group ">-->
+                            <!--<label for="group4">กลุ่ม : </label>-->
+                            <!--<input type="number" class="form-control" name="group[0][]" id="group4" min="0" max="99" value="5">-->
+                        <!--</div>-->
+
+                        <!--<div class="form-group left-20">-->
+                            <!--<label for="teacher4">อาจารย์ผู้สอน : </label>-->
+                            <!--<select class="selectpicker teacher" name="teacher[0][]" id="teacher4" data-live-search="true"-->
+                                    <!--title="เลือกอาจารย์ผู้สอน" data-width="230px" data-size="10">-->
+
+                            <!--</select>-->
+                        <!--</div>-->
+
+                        <!--<div class="form-group">-->
+                            <!--<button class="btn btn-danger left-20 removeGroup" tabindex="4">-->
+                                <!--<span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span> ลบกลุ่ม-->
+                            <!--</button>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+
+                    <hr id="show0">
+
+
+                    <div class="row">
+
+                        <!--add subject-->
+                        <div class="col-md-12">
+
+                            <button class="btn btn-primary" id="addSubjects">
+                                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> เพิ่มวิชา
+                            </button>
+
+                            <button class="btn btn-primary pull-right" id="addOpenSubjects">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> บันทึกข้อมูล
+                            </button>
+
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!--show-->
+    <div class="row">
+        <div class="col-md-12 ">
+            <h4>
+                ปีการศึกษา :
+                <div class="btn-group" role="group">
+                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+                    <button type="button" id="showYear" class="btn btn-default"></button>
+                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                </div>
+                &nbsp;
+                เทอม :&nbsp;
+                <span id="showTermRadioBtn">
+                    <label class="radio-inline"><input type="radio" name=termTable class='termRadioBtn' value="1" checked >1</label>
+                    <label class="radio-inline"><input type="radio" name=termTable class='termRadioBtn' value="2" >2</label>
+                    <label class="radio-inline"><input type="radio" name=termTable class='termRadioBtn' value="3" >3</label>
+                </span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>
+                <span id="showRadioBtn"></span>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 col-xl-10">
+            <div id="toolbar">
+                <button id="remove" class="btn btn-danger" data-toggle="confirmation" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> ลบข้อมูล
+                </button>
+            </div>
+
+            <table id="subjectTable" data-toolbar="#toolbar" data-id-field="index">
+
+            </table>
+        </div>
+    </div>
+
+    <div class="top-30"></div>
+
+
+</div>

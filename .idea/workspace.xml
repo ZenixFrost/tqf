@@ -1,0 +1,1260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="4d367220-3844-4c97-adea-7a23fe90aa1f" name="Default" comment="" />
+    <ignored path="tqf.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DatabaseView">
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="tqf" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
+      <file leaf-file-name="semesterTime.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/semesterTime.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="9680">
+              <caret line="440" column="65" lean-forward="false" selection-start-line="440" selection-start-column="65" selection-end-line="440" selection-end-column="65" />
+              <folding>
+                <marker date="1483171996222" expanded="true" signature="4462:4474" ph="..." />
+                <marker date="1483171996222" expanded="true" signature="8934:8948" ph="..." />
+                <marker date="1483171996222" expanded="true" signature="14727:14734" ph="×" />
+                <marker date="1483171996222" expanded="true" signature="15379:15386" ph="×" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="openSubjectsDAO.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/openSubjectsDAO.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="8536">
+              <caret line="388" column="9" lean-forward="false" selection-start-line="388" selection-start-column="9" selection-end-line="388" selection-end-column="9" />
+              <folding>
+                <marker date="1482747961383" expanded="true" signature="1010:1239" ph="SELECT `subj... course_subject" />
+                <marker date="1482747961383" expanded="true" signature="1455:1572" ph="SELECT `user... user" />
+                <marker date="1482747961383" expanded="true" signature="1930:2185" ph="SELECT `resp... open_subjects" />
+                <marker date="1482747961383" expanded="true" signature="5694:6726" ph="SELECT `open... open_subjects_group" />
+                <marker date="1482747961383" expanded="true" signature="6746:6818" ph="SELECT `name... user" />
+                <marker date="1482747961383" expanded="true" signature="7868:8984" ph="SELECT `open... open_subjects_group" />
+                <marker date="1482747961383" expanded="true" signature="9004:9076" ph="SELECT `name... user" />
+                <marker date="1482747961383" expanded="true" signature="10234:10717" ph="SELECT DISTI... open_subjects_group" />
+                <marker date="1482747961383" expanded="true" signature="12448:12671" ph="SELECT DISTI... open_subjects_group" />
+                <marker date="1482747961383" expanded="true" signature="13020:13358" ph="SELECT `file... teaching_file" />
+                <marker date="1482747961383" expanded="true" signature="14551:14784" ph="SELECT `file... tqf_file" />
+                <marker date="1482747961383" expanded="true" signature="15752:16127" ph="SELECT `subj... open_subjects" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="officialHoliday.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/officialHoliday.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="462">
+              <caret line="404" column="47" lean-forward="true" selection-start-line="404" selection-start-column="47" selection-end-line="404" selection-end-column="47" />
+              <folding>
+                <marker date="1483504964155" expanded="true" signature="3232:3244" ph="..." />
+                <marker date="1483504964155" expanded="true" signature="7021:7035" ph="..." />
+                <marker date="1483504964155" expanded="true" signature="10832:10844" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="0">
+                <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                <folding />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/index.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="5610">
+              <caret line="255" column="109" lean-forward="false" selection-start-line="255" selection-start-column="109" selection-end-line="255" selection-end-column="109" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="subject.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/subject.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="10120">
+              <caret line="460" column="138" lean-forward="false" selection-start-line="460" selection-start-column="138" selection-end-line="460" selection-end-column="138" />
+              <folding>
+                <marker date="1483588094578" expanded="true" signature="12870:12884" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sb-admin.css" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/bootstrap-3.3.7-dist/css/sb-admin.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2618">
+              <caret line="119" column="18" lean-forward="false" selection-start-line="119" selection-start-column="18" selection-end-line="119" selection-end-column="18" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="connect.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/connect.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="88">
+              <caret line="4" column="21" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="courseHead.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/courseHead.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="528">
+              <caret line="24" column="28" lean-forward="false" selection-start-line="23" selection-start-column="15" selection-end-line="24" selection-end-column="28" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="majorUser.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/majorUser.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="8470">
+              <caret line="385" column="0" lean-forward="false" selection-start-line="385" selection-start-column="0" selection-end-line="385" selection-end-column="0" />
+              <folding>
+                <marker date="1483169902055" expanded="true" signature="9984:9991" ph="×" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="CSS File" />
+        <option value="package_json" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/test.html" />
+        <option value="$PROJECT_DIR$/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker-custom.js" />
+        <option value="/HTML Fragment (officialHoliday.html:704).html" />
+        <option value="$PROJECT_DIR$/viewTqfFile.php" />
+        <option value="/HTML Fragment (officialHoliday.html:1980).html" />
+        <option value="$PROJECT_DIR$/viewReport.php" />
+        <option value="$PROJECT_DIR$/server/php/index.php" />
+        <option value="$PROJECT_DIR$/reportFileDAO.php" />
+        <option value="$PROJECT_DIR$/tqfDeadlineDAO.php" />
+        <option value="$PROJECT_DIR$/lib/bootstrap-select-1.12.1/dist/js/i18n/defaults-th_TH.js" />
+        <option value="$PROJECT_DIR$/subjectDAO.php" />
+        <option value="$PROJECT_DIR$/userDAO.php" />
+        <option value="$PROJECT_DIR$/connect.php" />
+        <option value="$PROJECT_DIR$/checkLogin.php" />
+        <option value="$PROJECT_DIR$/templates/viewOpenSubjects.html" />
+        <option value="$PROJECT_DIR$/js/login.js" />
+        <option value="$PROJECT_DIR$/templates/guest.html" />
+        <option value="$PROJECT_DIR$/templates/sectorHead.html" />
+        <option value="$PROJECT_DIR$/tqfPeriodDAO.php" />
+        <option value="$PROJECT_DIR$/templates/tqfPeriod.html" />
+        <option value="$PROJECT_DIR$/templates/moveCourse.html" />
+        <option value="$PROJECT_DIR$/New Text Document.txt" />
+        <option value="$PROJECT_DIR$/templates/facultyHead.html" />
+        <option value="$PROJECT_DIR$/js/state.js" />
+        <option value="$PROJECT_DIR$/templates/courseHead.html" />
+        <option value="$PROJECT_DIR$/summaryReportDAO.php" />
+        <option value="$PROJECT_DIR$/templates/summaryReport.html" />
+        <option value="$PROJECT_DIR$/test.php" />
+        <option value="$PROJECT_DIR$/semesterTimeDAO.php" />
+        <option value="$PROJECT_DIR$/officialHolidayDAO.php" />
+        <option value="$PROJECT_DIR$/templates/majorHead.html" />
+        <option value="$PROJECT_DIR$/templates/viewReport.html" />
+        <option value="$PROJECT_DIR$/templates/tqfDeadline.html" />
+        <option value="$PROJECT_DIR$/templates/reportDeadline.html" />
+        <option value="$APPLICATION_CONFIG_DIR$/consoles/db/9361d2e1-f9fa-46da-965f-33cfac609d7e/console.sql" />
+        <option value="$PROJECT_DIR$/templates/openSubjects.html" />
+        <option value="$PROJECT_DIR$/openSubjectsDAO.php" />
+        <option value="$PROJECT_DIR$/tqfFileDAO.php" />
+        <option value="$PROJECT_DIR$/courseDAO.php" />
+        <option value="$PROJECT_DIR$/majorUserDAO.php" />
+        <option value="$PROJECT_DIR$/templates/facultyUser.html" />
+        <option value="$PROJECT_DIR$/templates/majorUser.html" />
+        <option value="$PROJECT_DIR$/templates/course.html" />
+        <option value="$PROJECT_DIR$/templates/semesterTime.html" />
+        <option value="$PROJECT_DIR$/templates/tqfFile.html" />
+        <option value="$PROJECT_DIR$/templates/reportFile.html" />
+        <option value="$PROJECT_DIR$/templates/home.html" />
+        <option value="$PROJECT_DIR$/templates/officialHoliday.html" />
+        <option value="$PROJECT_DIR$/templates/subject.html" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/lib/bootstrap-3.3.7-dist/css/sb-admin.css" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="PhpServers">
+    <servers>
+      <server host="localhost" id="058fc4d9-5a6e-4b78-a85b-68e3a90c63f6" name="localhost" use_path_mappings="true" />
+    </servers>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" interpreter_name="PHP 7" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
+    <option name="width" value="1938" />
+    <option name="height" value="1048" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="tqf">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tqf" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tqf" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\tqf" />
+      <recent name="C:\xampp\htdocs\tqf\php" />
+      <recent name="C:\xampp\htdocs\tqf\templates" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\tqf\backup" />
+    </key>
+  </component>
+  <component name="RunManager" selected="PHP Web Application.tqf">
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+      <method />
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpBehatConfigurationType" factoryName="Behat">
+      <BehatRunner />
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
+      <method />
+    </configuration>
+    <configuration default="true" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application">
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory />
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui />
+      <extra-mocha-options />
+      <test-kind>DIRECTORY</test-kind>
+      <test-directory />
+      <recursive>false</recursive>
+      <method />
+    </configuration>
+    <configuration default="false" name="tqf" type="PhpWebAppRunConfigurationType" factoryName="PHP Web Application" browser="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" server_name="localhost" start_url="/tqf/">
+      <method />
+    </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="PHP Web Application.tqf" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4d367220-3844-4c97-adea-7a23fe90aa1f" name="Default" comment="" />
+      <created>1466932861750</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1466932861750</updated>
+      <workItem from="1466932863955" duration="3229000" />
+      <workItem from="1467061175123" duration="2032000" />
+      <workItem from="1467139877865" duration="4775000" />
+      <workItem from="1467234464585" duration="5232000" />
+      <workItem from="1467301062220" duration="606000" />
+      <workItem from="1467321126205" duration="820000" />
+      <workItem from="1467512769900" duration="9874000" />
+      <workItem from="1467561232776" duration="10164000" />
+      <workItem from="1467595998876" duration="30161000" />
+      <workItem from="1467743836008" duration="2474000" />
+      <workItem from="1467746332583" duration="2400000" />
+      <workItem from="1467773165166" duration="2409000" />
+      <workItem from="1467775593275" duration="36000" />
+      <workItem from="1467775655817" duration="14969000" />
+      <workItem from="1467804440271" duration="6323000" />
+      <workItem from="1467811127631" duration="5000" />
+      <workItem from="1467811201955" duration="12589000" />
+      <workItem from="1467897822807" duration="1255000" />
+      <workItem from="1467915383510" duration="611000" />
+      <workItem from="1467922851115" duration="11000" />
+      <workItem from="1467949822740" duration="665000" />
+      <workItem from="1468044566067" duration="240000" />
+      <workItem from="1468140967637" duration="46000" />
+      <workItem from="1468323373055" duration="98000" />
+      <workItem from="1468388345460" duration="27753000" />
+      <workItem from="1468437106043" duration="93000" />
+      <workItem from="1468475227346" duration="5321000" />
+      <workItem from="1468500695707" duration="13483000" />
+      <workItem from="1468555568999" duration="24800000" />
+      <workItem from="1468668229132" duration="7114000" />
+      <workItem from="1468698953824" duration="294000" />
+      <workItem from="1468724465914" duration="143000" />
+      <workItem from="1468724624808" duration="10772000" />
+      <workItem from="1468783432817" duration="1370000" />
+      <workItem from="1468788309332" duration="433000" />
+      <workItem from="1468812058779" duration="14945000" />
+      <workItem from="1468880039392" duration="421000" />
+      <workItem from="1468904842608" duration="6816000" />
+      <workItem from="1468984037608" duration="28612000" />
+      <workItem from="1469070389905" duration="14176000" />
+      <workItem from="1469101289395" duration="20634000" />
+      <workItem from="1469159048631" duration="24297000" />
+      <workItem from="1469252530868" duration="10489000" />
+      <workItem from="1469278232575" duration="17665000" />
+      <workItem from="1469335012786" duration="6336000" />
+      <workItem from="1469376381052" duration="1583000" />
+      <workItem from="1469435121056" duration="29717000" />
+      <workItem from="1469505876386" duration="35750000" />
+      <workItem from="1469591883995" duration="37566000" />
+      <workItem from="1469693302646" duration="7479000" />
+      <workItem from="1469721660125" duration="14912000" />
+      <workItem from="1469758005429" duration="34847000" />
+      <workItem from="1469849127220" duration="32786000" />
+      <workItem from="1469934129349" duration="18794000" />
+      <workItem from="1470020812480" duration="26714000" />
+      <workItem from="1470105622843" duration="19498000" />
+      <workItem from="1470200144674" duration="25503000" />
+      <workItem from="1470285071701" duration="27106000" />
+      <workItem from="1470367861759" duration="7748000" />
+      <workItem from="1470421300542" duration="603000" />
+      <workItem from="1470470414524" duration="24208000" />
+      <workItem from="1470547361475" duration="4134000" />
+      <workItem from="1470587066676" duration="613000" />
+      <workItem from="1470634895248" duration="15481000" />
+      <workItem from="1470731017097" duration="3553000" />
+      <workItem from="1470778809185" duration="1938000" />
+      <workItem from="1470810288356" duration="2617000" />
+      <workItem from="1470861349056" duration="7620000" />
+      <workItem from="1470888235319" duration="21910000" />
+      <workItem from="1470976652083" duration="13725000" />
+      <workItem from="1471068636465" duration="7925000" />
+      <workItem from="1471151797259" duration="1222000" />
+      <workItem from="1471153039605" duration="10019000" />
+      <workItem from="1471186543749" duration="959000" />
+      <workItem from="1471290974829" duration="1524000" />
+      <workItem from="1471335223448" duration="1942000" />
+      <workItem from="1471362717974" duration="10465000" />
+      <workItem from="1471416199697" duration="6841000" />
+      <workItem from="1471456816452" duration="5100000" />
+      <workItem from="1471488683360" duration="20035000" />
+      <workItem from="1471667944789" duration="26331000" />
+      <workItem from="1471771571897" duration="1864000" />
+      <workItem from="1471797179290" duration="6777000" />
+      <workItem from="1471837819789" duration="18475000" />
+      <workItem from="1471935354527" duration="9279000" />
+      <workItem from="1472016759841" duration="9129000" />
+      <workItem from="1472100574464" duration="16182000" />
+      <workItem from="1472137567857" duration="3850000" />
+      <workItem from="1472237562284" duration="1216000" />
+      <workItem from="1472279997445" duration="5782000" />
+      <workItem from="1472355476729" duration="19614000" />
+      <workItem from="1472413429351" duration="3166000" />
+      <workItem from="1472443507449" duration="15108000" />
+      <workItem from="1472537412386" duration="6848000" />
+      <workItem from="1472563741138" duration="5410000" />
+      <workItem from="1472583572219" duration="1458000" />
+      <workItem from="1472723269065" duration="1667000" />
+      <workItem from="1472745182932" duration="12903000" />
+      <workItem from="1472820121435" duration="8416000" />
+      <workItem from="1472870886365" duration="608000" />
+      <workItem from="1472872929190" duration="1202000" />
+      <workItem from="1472874156106" duration="17000" />
+      <workItem from="1472874191614" duration="64000" />
+      <workItem from="1472874691276" duration="19630000" />
+      <workItem from="1472930827856" duration="620000" />
+      <workItem from="1472960559906" duration="9673000" />
+      <workItem from="1472998875613" duration="2003000" />
+      <workItem from="1473051527082" duration="47000" />
+      <workItem from="1473051593209" duration="26638000" />
+      <workItem from="1473142978479" duration="7078000" />
+      <workItem from="1473188728197" duration="5565000" />
+      <workItem from="1473265256632" duration="3078000" />
+      <workItem from="1473303171234" duration="20168000" />
+      <workItem from="1473355287809" duration="4938000" />
+      <workItem from="1473403846404" duration="6753000" />
+      <workItem from="1473430989129" duration="1787000" />
+      <workItem from="1473439710016" duration="621000" />
+      <workItem from="1473478056080" duration="3358000" />
+      <workItem from="1473491680428" duration="2772000" />
+      <workItem from="1473503106646" duration="9867000" />
+      <workItem from="1473567148547" duration="13773000" />
+      <workItem from="1473608053888" duration="212000" />
+      <workItem from="1473616817443" duration="2008000" />
+      <workItem from="1473652131953" duration="23651000" />
+      <workItem from="1473747876612" duration="7889000" />
+      <workItem from="1473780900083" duration="10232000" />
+      <workItem from="1473819861481" duration="10069000" />
+      <workItem from="1473864342616" duration="2420000" />
+      <workItem from="1473909673820" duration="1938000" />
+      <workItem from="1473914338785" duration="15145000" />
+      <workItem from="1473953143850" duration="7869000" />
+      <workItem from="1474004989166" duration="13845000" />
+      <workItem from="1474023591365" duration="696000" />
+      <workItem from="1474033920001" duration="615000" />
+      <workItem from="1474043508063" duration="8846000" />
+      <workItem from="1474081342207" duration="1912000" />
+      <workItem from="1474087397780" duration="19483000" />
+      <workItem from="1474119347428" duration="4089000" />
+      <workItem from="1474133810482" duration="7105000" />
+      <workItem from="1474172501334" duration="4198000" />
+      <workItem from="1474199088548" duration="10373000" />
+      <workItem from="1474264143797" duration="5689000" />
+      <workItem from="1474300841445" duration="6416000" />
+      <workItem from="1474352114017" duration="2251000" />
+      <workItem from="1474361018907" duration="7994000" />
+      <workItem from="1474384448834" duration="2269000" />
+      <workItem from="1474395226853" duration="2277000" />
+      <workItem from="1474439398621" duration="3335000" />
+      <workItem from="1474457075628" duration="2553000" />
+      <workItem from="1474479164472" duration="85000" />
+      <workItem from="1474513496963" duration="23865000" />
+      <workItem from="1474564800591" duration="7693000" />
+      <workItem from="1474612913278" duration="6108000" />
+      <workItem from="1474653774920" duration="3569000" />
+      <workItem from="1474686195521" duration="4327000" />
+      <workItem from="1474710339406" duration="12515000" />
+      <workItem from="1474743140260" duration="1521000" />
+      <workItem from="1474773299663" duration="600000" />
+      <workItem from="1474786101102" duration="5274000" />
+      <workItem from="1474817645496" duration="1963000" />
+      <workItem from="1474863786601" duration="5383000" />
+      <workItem from="1475301643288" duration="6181000" />
+      <workItem from="1475395040258" duration="4708000" />
+      <workItem from="1475426639897" duration="3369000" />
+      <workItem from="1475467112580" duration="25195000" />
+      <workItem from="1475553142160" duration="4737000" />
+      <workItem from="1475565367255" duration="626000" />
+      <workItem from="1475566703318" duration="6936000" />
+      <workItem from="1475588953648" duration="5526000" />
+      <workItem from="1475634821221" duration="8921000" />
+      <workItem from="1475730247557" duration="115000" />
+      <workItem from="1475731623016" duration="28065000" />
+      <workItem from="1475807294123" duration="8461000" />
+      <workItem from="1475821749754" duration="10962000" />
+      <workItem from="1475849708763" duration="5063000" />
+      <workItem from="1475900120130" duration="12712000" />
+      <workItem from="1475959380923" duration="259000" />
+      <workItem from="1476006110807" duration="2596000" />
+      <workItem from="1476023971630" duration="3752000" />
+      <workItem from="1476081282295" duration="9189000" />
+      <workItem from="1476132281824" duration="80000" />
+      <workItem from="1476161488350" duration="4881000" />
+      <workItem from="1476177042580" duration="6751000" />
+      <workItem from="1476204241841" duration="612000" />
+      <workItem from="1476251639012" duration="6380000" />
+      <workItem from="1476266042069" duration="3716000" />
+      <workItem from="1476295328236" duration="770000" />
+      <workItem from="1476325044754" duration="32080000" />
+      <workItem from="1476384553828" duration="468000" />
+      <workItem from="1476411005729" duration="18968000" />
+      <workItem from="1476439871722" duration="8501000" />
+      <workItem from="1476499960101" duration="6813000" />
+      <workItem from="1476513198823" duration="36953000" />
+      <workItem from="1476564798673" duration="1792000" />
+      <workItem from="1476589350177" duration="12223000" />
+      <workItem from="1476632367769" duration="2661000" />
+      <workItem from="1476647705686" duration="3837000" />
+      <workItem from="1476675190909" duration="17761000" />
+      <workItem from="1476769513154" duration="3976000" />
+      <workItem from="1476782433672" duration="2921000" />
+      <workItem from="1476813661590" duration="611000" />
+      <workItem from="1476857576446" duration="2749000" />
+      <workItem from="1476964433295" duration="16483000" />
+      <workItem from="1477016404053" duration="25839000" />
+      <workItem from="1477101938952" duration="31899000" />
+      <workItem from="1477191517080" duration="13209000" />
+      <workItem from="1477206872141" duration="2121000" />
+      <workItem from="1477234743899" duration="7785000" />
+      <workItem from="1477282869177" duration="9929000" />
+      <workItem from="1477377362961" duration="6047000" />
+      <workItem from="1477399070195" duration="7715000" />
+      <workItem from="1477449767056" duration="346000" />
+      <workItem from="1477452223905" duration="7000" />
+      <workItem from="1477453380535" duration="1401000" />
+      <workItem from="1477455117658" duration="6020000" />
+      <workItem from="1477464319664" duration="12932000" />
+      <workItem from="1477499977034" duration="913000" />
+      <workItem from="1477500909194" duration="7130000" />
+      <workItem from="1477509404643" duration="258000" />
+      <workItem from="1477509779148" duration="45000" />
+      <workItem from="1477509942610" duration="59000" />
+      <workItem from="1477510017548" duration="34000" />
+      <workItem from="1477542082581" duration="473000" />
+      <workItem from="1477542653453" duration="21265000" />
+      <workItem from="1477658191025" duration="191000" />
+      <workItem from="1477658403972" duration="5000" />
+      <workItem from="1477658430686" duration="303000" />
+      <workItem from="1477658759026" duration="247000" />
+      <workItem from="1477676909692" duration="1182000" />
+      <workItem from="1477717383473" duration="2997000" />
+      <workItem from="1477723156115" duration="604000" />
+      <workItem from="1477723808124" duration="22668000" />
+      <workItem from="1477796466825" duration="167000" />
+      <workItem from="1477810992724" duration="2627000" />
+      <workItem from="1477842665752" duration="640000" />
+      <workItem from="1477856043522" duration="1174000" />
+      <workItem from="1477883852323" duration="73000" />
+      <workItem from="1477884931325" duration="1390000" />
+      <workItem from="1477893255868" duration="18933000" />
+      <workItem from="1477938387998" duration="3556000" />
+      <workItem from="1477980602506" duration="4937000" />
+      <workItem from="1477995062641" duration="1262000" />
+      <workItem from="1477997974069" duration="627000" />
+      <workItem from="1478012664285" duration="2395000" />
+      <workItem from="1478025279205" duration="3177000" />
+      <workItem from="1478075806343" duration="5295000" />
+      <workItem from="1478083195259" duration="3507000" />
+      <workItem from="1478103287168" duration="147000" />
+      <workItem from="1478110118712" duration="1218000" />
+      <workItem from="1478158816250" duration="15751000" />
+      <workItem from="1478194656852" duration="5277000" />
+      <workItem from="1478225679953" duration="8127000" />
+      <workItem from="1478246809042" duration="1195000" />
+      <workItem from="1478252955744" duration="2606000" />
+      <workItem from="1478271815365" duration="1752000" />
+      <workItem from="1478287625987" duration="763000" />
+      <workItem from="1478288632759" duration="1719000" />
+      <workItem from="1478316876338" duration="2800000" />
+      <workItem from="1478333309218" duration="1063000" />
+      <workItem from="1478356653461" duration="3016000" />
+      <workItem from="1478360169150" duration="50000" />
+      <workItem from="1478360250456" duration="2623000" />
+      <workItem from="1478374830402" duration="3208000" />
+      <workItem from="1478453498296" duration="1606000" />
+      <workItem from="1478460724611" duration="2186000" />
+      <workItem from="1478495631328" duration="17179000" />
+      <workItem from="1478543041343" duration="3304000" />
+      <workItem from="1478584793779" duration="7877000" />
+      <workItem from="1478617033264" duration="635000" />
+      <workItem from="1478626713702" duration="6301000" />
+      <workItem from="1478658523405" duration="8561000" />
+      <workItem from="1478671414430" duration="7432000" />
+      <workItem from="1478711447861" duration="1353000" />
+      <workItem from="1478747807370" duration="17923000" />
+      <workItem from="1478784494381" duration="12235000" />
+      <workItem from="1478805024378" duration="651000" />
+      <workItem from="1478849457263" duration="16616000" />
+      <workItem from="1478918299353" duration="44564000" />
+      <workItem from="1478998993505" duration="5865000" />
+      <workItem from="1479019931383" duration="6782000" />
+      <workItem from="1479053577965" duration="12650000" />
+      <workItem from="1479090433567" duration="9458000" />
+      <workItem from="1479101066982" duration="22778000" />
+      <workItem from="1479131856839" duration="9351000" />
+      <workItem from="1479234433335" duration="6016000" />
+      <workItem from="1479263770688" duration="11696000" />
+      <workItem from="1479278369939" duration="7980000" />
+      <workItem from="1479298454232" duration="888000" />
+      <workItem from="1479307934330" duration="2331000" />
+      <workItem from="1479317399135" duration="3111000" />
+      <workItem from="1479354066622" duration="15946000" />
+      <workItem from="1479380996025" duration="12210000" />
+      <workItem from="1479436665812" duration="6422000" />
+      <workItem from="1479443693276" duration="605000" />
+      <workItem from="1479463799719" duration="3847000" />
+      <workItem from="1479480385918" duration="10538000" />
+      <workItem from="1479502106286" duration="11000" />
+      <workItem from="1479524078766" duration="9108000" />
+      <workItem from="1479546844960" duration="13401000" />
+      <workItem from="1479659672493" duration="600000" />
+      <workItem from="1479698790505" duration="29454000" />
+      <workItem from="1479794903232" duration="3604000" />
+      <workItem from="1479841629051" duration="2840000" />
+      <workItem from="1479882412009" duration="6157000" />
+      <workItem from="1479891313858" duration="1911000" />
+      <workItem from="1479903383347" duration="1620000" />
+      <workItem from="1479922799778" duration="1596000" />
+      <workItem from="1479955007932" duration="9964000" />
+      <workItem from="1480043372750" duration="7098000" />
+      <workItem from="1480101350453" duration="1558000" />
+      <workItem from="1480214782146" duration="563000" />
+      <workItem from="1480312196635" duration="25717000" />
+      <workItem from="1480407554190" duration="3484000" />
+      <workItem from="1480440867227" duration="433000" />
+      <workItem from="1480477309303" duration="6519000" />
+      <workItem from="1480488159655" duration="10712000" />
+      <workItem from="1480528936547" duration="3457000" />
+      <workItem from="1480562612698" duration="11819000" />
+      <workItem from="1480647593255" duration="5222000" />
+      <workItem from="1480661084987" duration="4477000" />
+      <workItem from="1480679241998" duration="7801000" />
+      <workItem from="1480700429056" duration="1253000" />
+      <workItem from="1480733186572" duration="7433000" />
+      <workItem from="1480756293140" duration="12284000" />
+      <workItem from="1480819888473" duration="18437000" />
+      <workItem from="1480907894446" duration="2628000" />
+      <workItem from="1480943475147" duration="4677000" />
+      <workItem from="1480994895999" duration="8932000" />
+      <workItem from="1481050231755" duration="402000" />
+      <workItem from="1481085147059" duration="1871000" />
+      <workItem from="1481134424305" duration="895000" />
+      <workItem from="1481167772313" duration="14266000" />
+      <workItem from="1481219948528" duration="649000" />
+      <workItem from="1481224026630" duration="1389000" />
+      <workItem from="1481262397603" duration="3106000" />
+      <workItem from="1481296569058" duration="262000" />
+      <workItem from="1481303466543" duration="11809000" />
+      <workItem from="1481341010055" duration="33862000" />
+      <workItem from="1481424166514" duration="5579000" />
+      <workItem from="1481466861681" duration="1554000" />
+      <workItem from="1481481488323" duration="256000" />
+      <workItem from="1481485471806" duration="540000" />
+      <workItem from="1481514679445" duration="11632000" />
+      <workItem from="1481728486596" duration="865000" />
+      <workItem from="1481739694161" duration="3050000" />
+      <workItem from="1481771418200" duration="2830000" />
+      <workItem from="1481814036089" duration="4334000" />
+      <workItem from="1481827760264" duration="442000" />
+      <workItem from="1481853837789" duration="23362000" />
+      <workItem from="1481942123269" duration="7441000" />
+      <workItem from="1482046346844" duration="634000" />
+      <workItem from="1482056172721" duration="2265000" />
+      <workItem from="1482197694461" duration="2824000" />
+      <workItem from="1482290824988" duration="2085000" />
+      <workItem from="1482305448208" duration="4280000" />
+      <workItem from="1482389369478" duration="925000" />
+      <workItem from="1482407619228" duration="7355000" />
+      <workItem from="1482499920901" duration="6583000" />
+      <workItem from="1482523152561" duration="1582000" />
+      <workItem from="1482552534847" duration="22573000" />
+      <workItem from="1482605444860" duration="4604000" />
+      <workItem from="1482632004359" duration="20200000" />
+      <workItem from="1482678565098" duration="4361000" />
+      <workItem from="1482720119550" duration="17523000" />
+      <workItem from="1482762991557" duration="1126000" />
+      <workItem from="1482807041298" duration="12088000" />
+      <workItem from="1483166224543" duration="7218000" />
+      <workItem from="1483504884377" duration="679000" />
+      <workItem from="1483517707489" duration="870000" />
+      <workItem from="1483553625447" duration="606000" />
+      <workItem from="1483586934077" duration="3643000" />
+      <workItem from="1486351910238" duration="336000" />
+      <workItem from="1486357429887" duration="1694000" />
+      <workItem from="1486431345492" duration="1014000" />
+      <workItem from="1486449371864" duration="5000" />
+      <workItem from="1486517682343" duration="128000" />
+      <workItem from="1486522188116" duration="1104000" />
+      <workItem from="1486527249421" duration="391000" />
+      <workItem from="1486624148030" duration="1225000" />
+      <workItem from="1489200100817" duration="197000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="2807685000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16845493" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32821077" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13948497" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24946351" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3295583" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295583" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32842582" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32842582" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18991417" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32842582" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24946351" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="processedProjectFiles" value="true" />
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="129" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/lib/jQuery-Autocomplete-master/typings/jquery/jquery.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="685">
+          <caret line="3220" column="12" lean-forward="false" selection-start-line="3220" selection-start-column="12" selection-end-line="3220" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/php/UploadHandler.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="26" column="54" lean-forward="false" selection-start-line="26" selection-start-column="54" selection-end-line="26" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-598">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/php/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="1" column="2" lean-forward="false" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/guest.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/sectorHead.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="430">
+          <caret line="61" column="55" lean-forward="false" selection-start-line="61" selection-start-column="55" selection-end-line="61" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/tqfPeriod.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="693">
+          <caret line="120" column="6" lean-forward="false" selection-start-line="120" selection-start-column="6" selection-end-line="120" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/loading.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/moveCourse.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="77" column="40" lean-forward="false" selection-start-line="77" selection-start-column="40" selection-end-line="77" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/New Text Document.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="273">
+          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/facultyHead.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7539">
+          <caret line="359" column="97" lean-forward="false" selection-start-line="359" selection-start-column="78" selection-end-line="359" selection-end-column="97" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/viewOpenSubjects.html" />
+    <entry file="file://$PROJECT_DIR$/summaryReportDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="157">
+          <caret line="289" column="31" lean-forward="false" selection-start-line="289" selection-start-column="31" selection-end-line="289" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/checkLogin.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-17">
+          <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/officialHolidayDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="99" column="59" lean-forward="false" selection-start-line="99" selection-start-column="59" selection-end-line="99" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reportFileDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-38">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/semesterTimeDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="17" column="20" lean-forward="false" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/subjectDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="171" column="6" lean-forward="false" selection-start-line="171" selection-start-column="6" selection-end-line="178" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tqfDeadlineDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="554">
+          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tqfPeriodDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="54" column="25" lean-forward="false" selection-start-line="54" selection-start-column="25" selection-end-line="54" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/majorHead.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="173" column="38" lean-forward="false" selection-start-line="173" selection-start-column="38" selection-end-line="173" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/viewReport.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="237" column="29" lean-forward="false" selection-start-line="237" selection-start-column="29" selection-end-line="237" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/9361d2e1-f9fa-46da-965f-33cfac609d7e/console.sql" />
+    <entry file="dbDummy://dbtable:/26ef8591/9361d2e1-f9fa-46da-965f-33cfac609d7e/tqf.faculty">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://DATABASE/9361d2e1-f9fa-46da-965f-33cfac609d7e">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>DATABASE</ID>
+          <OriginalElement>9361d2e1-f9fa-46da-965f-33cfac609d7e</OriginalElement>
+          <nodes>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.faculty</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.report_major_deadline</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.course_admin</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.faculty_executive_officer</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.course</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.tqf_file</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.sector</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.official_holiday</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.tqf_major_deadline</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.major</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.report_file</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.tqf_period</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.teaching_file</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.semester_time</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.open_subjects</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.user</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.open_subjects_group</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.subject</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.report_deadline</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.position</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.tqf_deadline</node>
+            <node x="" y="">9361d2e1-f9fa-46da-965f-33cfac609d7e.TABLE:tqf.course_subject</node>
+          </nodes>
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="0.9983422720624088" x="1597.0" y="18.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>Columns</Category>
+            <Category>Key columns</Category>
+          </Categories>
+          <SCOPE>All</SCOPE>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="588">
+          <caret line="493" column="27" lean-forward="false" selection-start-line="493" selection-start-column="27" selection-end-line="493" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/openSubjects.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7182">
+          <caret line="480" column="22" lean-forward="false" selection-start-line="480" selection-start-column="22" selection-end-line="480" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/courseDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="242" column="43" lean-forward="false" selection-start-line="242" selection-start-column="43" selection-end-line="242" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tqfFileDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1268">
+          <caret line="82" column="42" lean-forward="false" selection-start-line="82" selection-start-column="42" selection-end-line="82" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/tqfDeadline.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="777">
+          <caret line="260" column="58" lean-forward="false" selection-start-line="260" selection-start-column="58" selection-end-line="260" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/majorUserDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="146" column="43" lean-forward="false" selection-start-line="146" selection-start-column="43" selection-end-line="146" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/login.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1764">
+          <caret line="18" column="37" lean-forward="false" selection-start-line="18" selection-start-column="26" selection-end-line="18" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/state.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="777">
+          <caret line="37" column="11" lean-forward="false" selection-start-line="37" selection-start-column="11" selection-end-line="37" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/course.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10101">
+          <caret line="481" column="49" lean-forward="false" selection-start-line="481" selection-start-column="49" selection-end-line="481" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/tqfFile.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9072">
+          <caret line="432" column="67" lean-forward="false" selection-start-line="432" selection-start-column="55" selection-end-line="432" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/summaryReport.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9954">
+          <caret line="474" column="50" lean-forward="false" selection-start-line="474" selection-start-column="31" selection-end-line="474" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/reportFile.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4290">
+          <caret line="195" column="71" lean-forward="false" selection-start-line="195" selection-start-column="67" selection-end-line="195" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/facultyUser.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8690">
+          <caret line="395" column="12" lean-forward="false" selection-start-line="395" selection-start-column="12" selection-end-line="399" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/reportDeadline.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8646">
+          <caret line="393" column="30" lean-forward="false" selection-start-line="393" selection-start-column="30" selection-end-line="393" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/home.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6006">
+          <caret line="273" column="20" lean-forward="false" selection-start-line="273" selection-start-column="20" selection-end-line="273" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/css/margin.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="8" column="10" lean-forward="false" selection-start-line="8" selection-start-column="10" selection-end-line="8" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/courseHead.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="24" column="28" lean-forward="false" selection-start-line="23" selection-start-column="15" selection-end-line="24" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/majorUser.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8470">
+          <caret line="385" column="0" lean-forward="false" selection-start-line="385" selection-start-column="0" selection-end-line="385" selection-end-column="0" />
+          <folding>
+            <marker date="1483169902055" expanded="true" signature="9984:9991" ph="×" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/semesterTime.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9680">
+          <caret line="440" column="65" lean-forward="false" selection-start-line="440" selection-start-column="65" selection-end-line="440" selection-end-column="65" />
+          <folding>
+            <marker date="1483171996222" expanded="true" signature="4462:4474" ph="..." />
+            <marker date="1483171996222" expanded="true" signature="8934:8948" ph="..." />
+            <marker date="1483171996222" expanded="true" signature="14727:14734" ph="×" />
+            <marker date="1483171996222" expanded="true" signature="15379:15386" ph="×" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/openSubjectsDAO.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8536">
+          <caret line="388" column="9" lean-forward="false" selection-start-line="388" selection-start-column="9" selection-end-line="388" selection-end-column="9" />
+          <folding>
+            <marker date="1482747961383" expanded="true" signature="1010:1239" ph="SELECT `subj... course_subject" />
+            <marker date="1482747961383" expanded="true" signature="1455:1572" ph="SELECT `user... user" />
+            <marker date="1482747961383" expanded="true" signature="1930:2185" ph="SELECT `resp... open_subjects" />
+            <marker date="1482747961383" expanded="true" signature="5694:6726" ph="SELECT `open... open_subjects_group" />
+            <marker date="1482747961383" expanded="true" signature="6746:6818" ph="SELECT `name... user" />
+            <marker date="1482747961383" expanded="true" signature="7868:8984" ph="SELECT `open... open_subjects_group" />
+            <marker date="1482747961383" expanded="true" signature="9004:9076" ph="SELECT `name... user" />
+            <marker date="1482747961383" expanded="true" signature="10234:10717" ph="SELECT DISTI... open_subjects_group" />
+            <marker date="1482747961383" expanded="true" signature="12448:12671" ph="SELECT DISTI... open_subjects_group" />
+            <marker date="1482747961383" expanded="true" signature="13020:13358" ph="SELECT `file... teaching_file" />
+            <marker date="1482747961383" expanded="true" signature="14551:14784" ph="SELECT `file... tqf_file" />
+            <marker date="1482747961383" expanded="true" signature="15752:16127" ph="SELECT `subj... open_subjects" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/connect.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="4" column="21" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/bootstrap-3.3.7-dist/css/sb-admin.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2618">
+          <caret line="119" column="18" lean-forward="false" selection-start-line="119" selection-start-column="18" selection-end-line="119" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/subject.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10120">
+          <caret line="460" column="138" lean-forward="false" selection-start-line="460" selection-start-column="138" selection-end-line="460" selection-end-column="138" />
+          <folding>
+            <marker date="1483588094578" expanded="true" signature="12870:12884" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5610">
+          <caret line="255" column="109" lean-forward="false" selection-start-line="255" selection-start-column="109" selection-end-line="255" selection-end-column="109" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/officialHoliday.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="404" column="47" lean-forward="true" selection-start-line="404" selection-start-column="47" selection-end-line="404" selection-end-column="47" />
+          <folding>
+            <marker date="1483504964155" expanded="true" signature="3232:3244" ph="..." />
+            <marker date="1483504964155" expanded="true" signature="7021:7035" ph="..." />
+            <marker date="1483504964155" expanded="true" signature="10832:10844" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

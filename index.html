@@ -1,0 +1,418 @@
+<!doctype html>
+<html>
+<head>
+    <title>tqf</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--google API-->
+    <meta name="google-signin-client_id" content="495548064612-h9gvpqiumbfue4tpkmh34uqnnthdljuc.apps.googleusercontent.com">
+
+    <!--bootstrap-->
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-3.3.7-dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-3.3.7-dist/css/sb-admin.css"/>
+
+    <!--bootstrap-xlgrid-master-->
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-xlgrid-master/bootstrap-xlgrid.min.css"/>
+
+    <!--bootstrap-datetimepicker-->
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+
+    <!--jasny bootstrap use for left side nav -->
+    <!--<link rel="stylesheet" type="text/css" href="./lib/jasny-bootstrap/css/jasny-bootstrap.min.css"/>-->
+
+    <!--bootstrap select-->
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-select-1.10.0/dist/css/bootstrap-select.min.css"/>
+
+    <!--bootstrap table-->
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-table-master/dist/bootstrap-table.min.css"/>
+
+    <!--bootstrap edit table-->
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap3-editable/css/bootstrap-editable.css"/>
+
+    <!--select2-->
+    <link rel="stylesheet" type="text/css" href="./lib/select2-3.5.4/select2.css">
+    <link rel="stylesheet" type="text/css" href="./lib/select2-bootstrap-css-master/select2-bootstrap.css">
+
+    <!--margin-->
+    <link rel="stylesheet" type="text/css" href="css/margin.css"/>
+
+    <!--ajax loading-->
+    <link rel="stylesheet" type="text/css" href="css/loading.css"/>
+
+    <!--jQuery-Autocomplete-master-->
+    <link rel="stylesheet" type="text/css" href="./lib/jQuery-Autocomplete-master/content/styles.css">
+
+    <!--bootstrap-datetimepicker-master-->
+    <link rel="stylesheet" type="text/css" href="./lib/bootstrap-datetimepicker-master/build/css/bootstrap-datetimepicker.min.css">
+
+    <!--jQuery-File-Upload-9.12.5-->
+    <link rel="stylesheet" type="text/css" href="./lib/jQuery-File-Upload-9.12.5/css/jquery.fileupload.css">
+
+    <!--font-awesome-4.7.0-->
+    <link rel="stylesheet" type="text/css" href="./lib/font-awesome-4.7.0/css/font-awesome.min.css">
+
+    <!--formvalidation-->
+    <link rel="stylesheet" type="text/css" href="./lib/formvalidation/css/formValidation.min.css">
+
+    <!--/////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+    <!--jquery-->
+    <script src="./lib/jquery/jquery-2.1.4.js"></script>
+
+    <!--bootstrap-->
+    <script src="./lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+    <!--bootstrap-datetimepicker-->
+    <script src="./lib/bootstrap-datepicker/dist/js/bootstrap-datepicker-custom.js"></script>
+    <script src="./lib/bootstrap-datepicker/dist/locales/bootstrap-datepicker.th.min.js"></script>
+
+    <!--login-->
+    <script type="text/javascript" src="./js/login.js"></script>
+    <!--state page-->
+    <script type="text/javascript" src="./js/state.js"></script>
+
+    <!--jasny bootstrap-->
+    <!--<script src="./lib/jasny-bootstrap/js/jasny-bootstrap.min.js"></script>-->
+
+    <!--bootstrap select-->
+    <script src="./lib/bootstrap-select-1.12.1/dist/js/bootstrap-select.min.js"></script>
+    <script src="./lib/bootstrap-select-1.12.1/dist/js/i18n/defaults-th_TH.js"></script>
+
+    <!--bootstrap table-->
+    <script src="./lib/bootstrap-table-master/dist/bootstrap-table.min.js"></script>
+    <script src="./lib/bootstrap-table-master/dist/locale/bootstrap-table-th-TH.js"></script>
+    <script src="./lib/bootstrap-table-master/dist/extensions/editable/bootstrap-table-editable.min.js"></script>
+
+    <!--bootstrap editable-->
+    <script src="./lib/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+    <!--select2-->
+    <script src="./lib/select2-3.5.4/select2.min.js"></script>
+
+    <!--google button-->
+    <!--<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>-->
+    <script src="./lib/api-google/js/platform.js" ></script>
+
+    <!--jQuery-Autocomplete-master-->
+    <script src="./lib/jQuery-Autocomplete-master/dist/jquery.autocomplete.min.js"></script>
+
+    <!--bootstrap-datetimepicker-master-->
+    <script src="./lib/moment/moment-with-locales.js"></script>
+    <script src="./lib/bootstrap-datetimepicker-master/src/js/bootstrap-datetimepicker.js"></script>
+
+    <!--jQuery-File-Upload-9.12.5-->
+    <script src="./lib/jQuery-File-Upload-9.12.5/js/vendor/jquery.ui.widget.js"></script>
+    <script src="./lib/jQuery-File-Upload-9.12.5/js/jquery.iframe-transport.js"></script>
+    <script src="./lib/jQuery-File-Upload-9.12.5/js/jquery.fileupload.js"></script>
+    <script src="./lib/jQuery-File-Upload-9.12.5/js/jquery.fileupload-process.js"></script>
+    <script src="./lib/jQuery-File-Upload-9.12.5/js/jquery.fileupload-validate.js"></script>
+
+    <!--bootstrap-confirmation-->
+    <script src="./lib/Bootstrap-Confirmation-master/bootstrap-confirmation.min.js"></script>
+
+    <!--formvalidation-->
+    <script src="./lib/formvalidation/js/formValidation.min.js"></script>
+    <script src="./lib/formvalidation/js/language/th_TH.js"></script>
+
+    <!--//////////////////////////////-->
+    <style type="text/css">
+
+        /*@media (min-width: 992px) {*/
+            /*body {*/
+                /*padding: 0 0 0 265px;*/
+            /*}*/
+
+            /*.navmenu {*/
+
+                /*width: 245px;*/
+                /*padding-top: 50px;*/
+            /*}*/
+
+            /*.navbar {*/
+                /*height: 50px;*/
+            /*}*/
+
+        /*}*/
+
+        /*@media (max-width: 992px) {*/
+            /*.navbar-toggle {*/
+                /*display: block; !* force showing the toggle *!*/
+            /*}*/
+        /*}*/
+
+        body {
+            font-size: 16px;
+        }
+
+        thead th{
+            background-color: #f5f5f5;
+        }
+    </style>
+
+    <script>
+
+
+        jQuery.fn.center = function () {
+            this.css("position", "fixed");
+            this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2.5) +
+                            $(window).scrollTop()) + "px");
+            this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 1.75) +
+                            $(window).scrollLeft()) + "px");
+            return this;
+        };
+
+        //Ajax loading
+        $(document).ready(function () {
+//            $("<img id=\"loading\" src=\"./images/default.svg\">").insertAfter("#view").center();
+//            $('#loading').loader();
+            $(".kart-loader").center();
+
+            $(document).ajaxStart(function () {
+//                $("#floatingBarsG").show();
+                $(".kart-loader").css('visibility', 'visible');
+            }).ajaxStop(function () {
+//                $("#floatingBarsG").hide();
+                $(".kart-loader").css('visibility', 'hidden');
+            });
+        });
+
+
+        $(document).ready(function () {
+
+            var $facultyAdmin = $("#facultyAdmin");
+            var $majorAdmin = $("#majorAdmin");
+            var $basicSystem = $("#basicSystem");
+            var $summaryMenu = $("#summaryMenu");
+            var $subjectMenu = $("#subjectMenu");
+            var $reportFile = $("#reportFile");
+            var $deadlineMenu = $("#deadlineMenu");
+
+
+            $facultyAdmin.hide();
+            $majorAdmin.hide();
+            $basicSystem.hide();
+            $summaryMenu.hide();
+            $subjectMenu.hide();
+            $reportFile.hide();
+            $deadlineMenu.hide();
+
+
+            if(user != null) {
+
+                if(user.faculty_admin == 1){
+                    $facultyAdmin.show();
+                    $basicSystem.show();
+                }
+
+                if(user.major_admin == 1){
+                    $majorAdmin.show();
+                }
+
+                if(user.faculty_admin == 1 || user.faculty_executive_officer == 1 || user.major_admin == 1 || user.major_president == 1 || user.sector_president == 1 || user.course_president != null || user.course_admin >= 1){
+                    $summaryMenu.show();
+                }
+
+                if(user.major_admin == 1 || user.course_admin >= 1){
+                    $subjectMenu.show();
+                }
+
+                if(user.faculty_admin == 1 || user.major_admin == 1){
+                    $deadlineMenu.show();
+                }
+
+                if(user.course_president != null){
+                    $reportFile.show();
+                }
+
+
+            }else{
+                $("#menu").hide();
+            }
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+<!-- //////////////////////////////////////////////top side navigation///////////////////////////////////////////////-->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand"  href="" id="header">
+            <!--<span class="glyphicon glyphicon-file" aria-hidden="true"></span>-->
+            <i class="fa fa-upload" aria-hidden="true"></i> ระบบส่งเอกสาร มคอ. <small>(TQF Management System)</small>
+        </a>
+    </div>
+
+    <ul id="login" class="nav navbar-right top-nav">
+        <li>
+            <div id="SignIn" class="g-signin2" data-onsuccess="onSignIn" style="margin: 7px 8px"></div>
+        </li>
+    </ul>
+
+    <ul id="loading" class="nav navbar-nav navbar-right navbar-text" style="margin: 10px 5px">
+        <li>
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+        </li>
+    </ul>
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+
+<!-- /////////////////////////////////////////////left side navigation///////////////////////////////////////////////-->
+
+    <!--<nav class="navmenu navmenu-default  navmenu-fixed-left offcanvas-sm" role="navigation" id="menu">-->
+    <div class="collapse navbar-collapse navbar-ex1-collapse" >
+        <ul class="nav navbar-nav side-nav" id="menu">
+            <li class="page activated" id="home"><a href=""><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp; หน้าแรก</a></li>
+
+            <li>
+                <a href="javascript:;" data-toggle="collapse" data-target="#tqfCollapse"><i class="glyphicon glyphicon-open-file"></i>&nbsp; ส่งไฟล์ มคอ. <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="tqfCollapse" class="collapse">
+                    <li class="page" id="tqfFile"><a href=""><i class="glyphicon glyphicon-open" aria-hidden="true"></i>&nbsp;  ไฟล์ มคอ. 3-6</a></li>
+                    <li class="page" id="reportFile"><a href=""><i class="glyphicon glyphicon-open" aria-hidden="true"></i>&nbsp;  ไฟล์ มคอ. 7</a></li>
+
+                </ul>
+            </li>
+
+
+            <li id="summaryMenu">
+                <a href="javascript:;" data-toggle="collapse" data-target="#summaryCollapse"><i class="glyphicon glyphicon-stats"></i>&nbsp; สรุปการส่ง มคอ. <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="summaryCollapse" class="collapse">
+                    <li class="page" id="summaryReport"><a href=""><i class="fa fa-bar-chart" aria-hidden="true"></i>&nbsp; มคอ. 3-6</a></li>
+                    <li class="page" id="viewReport"><a href=""><i class="fa fa-bar-chart" aria-hidden="true"></i>&nbsp; มคอ. 7</a></li>
+                </ul>
+            </li>
+
+
+            <li id="subjectMenu">
+                <a href="javascript:;" data-toggle="collapse" data-target="#subjectCollapse"><i class="glyphicon glyphicon-book"></i>&nbsp; กำหนดวิชาและกลุ่มเรียน <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="subjectCollapse" class="collapse">
+                    <li class="page" id="subject"><a href=""><i class="fa fa-book" aria-hidden="true"></i>&nbsp; วิชาของหลักสูตร</a></li>
+                    <!--<li role="separator" class="divider"></li>-->
+                    <li class="page" id="openSubjects"><a href=""><i class="fa fa-book" aria-hidden="true"></i>&nbsp; กลุ่มเรียนวิชา</a></li>
+                    <!--<li class="page" id="viewOpenSubjects"><a href="">ดูกลุ่มเรียนวิชา</a></li>-->
+                </ul>
+            </li>
+
+
+            <li id="deadlineMenu">
+                <a href="javascript:;" data-toggle="collapse" data-target="#deadlineCollapse"><i class="fa fa-calendar-o" aria-hidden="true"></i>&nbsp; กำหนดวันส่ง มคอ. <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="deadlineCollapse" class="collapse">
+                    <li class="page" id="tqfDeadline"><a href=""><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp; วันส่ง มคอ. 3-6</a></li>
+                    <li class="page" id="reportDeadline"><a href=""><i class="fa fa-calendar" aria-hidden="true"></i>&nbsp; วันส่ง มคอ. 7</a></li>
+                </ul>
+            </li>
+
+
+            <li id="basicSystem">
+                <a href="javascript:;" data-toggle="collapse" data-target="#basicSystemCollapse"><i class="glyphicon glyphicon-tasks" aria-hidden="true"></i>&nbsp; ตั้งค่าพื้นฐานของระบบ <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="basicSystemCollapse" class="collapse">
+                    <li class="page" id="semesterTime"><a href=""><i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i>&nbsp; วันเปิด-ปิดภาคเรียน</a></li>
+                    <li class="page" id="officialHoliday"><a href=""><i class="fa fa-calendar-plus-o fa-fw" aria-hidden="true"></i>&nbsp; วันหยุดราชการ</a></li>
+                    <li class="page" id="tqfPeriod"><a href=""><i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; ระยะเวลาส่ง มคอ.</a></li>
+                    <!--<li role="separator" class="divider"></li>-->
+                    <li class="page" id="course"><a href=""><i class="fa fa-file fa-fw" aria-hidden="true"></i>&nbsp; หลักสูตรคณะ</a></li>
+                    <!--<li class="page" id="moveCourse"><a href=""><i class="fa fa-exchange  fa-fw" aria-hidden="true"></i>&nbsp; ย้ายสังกัดหลักสูตรคณะ</a></li>-->
+                </ul>
+            </li>
+
+            <li id="majorAdmin">
+                <a href="javascript:;" data-toggle="collapse" data-target="#majorAdminCollapse"><i class="glyphicon glyphicon-cog" aria-hidden="true"></i>&nbsp; ตั้งค่าบัญชีผุ้ใช้ (สาขา) <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="majorAdminCollapse" class="collapse">
+                    <li class="page" id="majorUser"><a href=""><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>&nbsp; บัญชีผู้ใช้</a></li>
+                    <li class="page" id="courseHead"><a href=""><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; ประธานหลักสูตร</a></li>
+                </ul>
+            </li>
+
+            <li id="facultyAdmin">
+                <a href="javascript:;" data-toggle="collapse" data-target="#facultyAdminCollapse"><i class="glyphicon glyphicon-cog" aria-hidden="true"></i>&nbsp; ตั้งค่าบัญชีผู้ใช้ (คณะ) <i class="fa fa-fw fa-caret-down"></i></a>
+                <ul id="facultyAdminCollapse" class="collapse">
+                    <li class="page" id="facultyUser"><a href=""><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i>&nbsp; บัญชีผู้ใช้</a></li>
+                    <li class="page" id="facultyHead"><a href=""><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; ผู้บริหารคณะ</a></li>
+                    <li class="page" id="sectorHead"><a href=""><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; หัวหน้าภาควิชา</a></li>
+                    <li class="page" id="majorHead"><a href=""><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; หัวหน้าสาขา</a></li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+
+
+
+
+<!--//////////////////////////////////////////////////Templates//////////////////////////////////////////////////////-->
+
+
+    <div id="page-wrapper">
+            <div class="container-fluid">
+                <div id="view"></div>
+
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+
+<!--//////////////////////////////////////////////////loading ajax///////////////////////////////////////////////////-->
+<div class="kart-loader" style="position: fixed;">
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+    <div class="sheath">
+        <div class="segment"></div>
+    </div>
+</div>
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+            </div>
+    </div>
+</div>
+</body>
+</html>

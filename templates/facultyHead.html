@@ -1,0 +1,398 @@
+<style>
+    .selectWidth {
+        width: 300px;
+    }
+
+    #addPositionUser .selectContainer .form-control-feedback {
+        /* Adjust feedback icon position */
+        right: 18px;
+    }
+
+</style>
+
+<script>
+    var facultyUser;
+    var facultyPosition;
+    var facultyUserPosition;
+
+    $(function () {
+        getFacultyUser();
+        checkRemoveData();
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+"</h3>");
+    });
+
+    //ผู้บริหารคณะ (drop down เลือกผู้บริหารคณะ)
+    function getFacultyUser() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getFacultyUser', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                facultyUser = response;
+//                console.log(JSON.stringify(facultyUser));
+
+                var select = "";
+                $.each(facultyUser,function (i,facUser) {
+                    select += "<option value=" + facUser.id + ">" + facUser.text + "</option>";
+                });
+                $("#facultyUserSelect").html(select).selectpicker('refresh');
+                getPosition();
+            }
+        })
+    }
+
+    //ต่ำแหน่งผู้บริหารคณะ  (drop down เลือกต่ำแหน่งผู้บริหาร)
+    function getPosition(){
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getPosition', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                facultyPosition = response;
+
+                var select = "";
+                $.each(facultyPosition,function (i,position) {
+                    select += "<option value=" + position.id + ">" + position.text + "</option>";
+                });
+                $("#positionSelect").html(select);
+                $("#positionSelect").selectpicker('refresh');
+                getFaculty();
+            }
+        });
+    }
+
+    //คณะ
+    $faculty = $('#fac_pre');
+    $positionRemove = $('#positionRemove');
+
+    function getFaculty() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getFaculty', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                facultyUserPosition = response;
+                $faculty.bootstrapTable({
+                    columns: [{
+                        field: 'state',
+                        checkbox: true
+                    },{
+                        title: 'ลำดับ',
+                        width: '1%',
+                        formatter: function (value, row, index) {
+                            return [index+1].join('  ');
+                        },
+                        align: 'center'
+                    },{
+                        field: 'user_id',
+                        title: 'ผู้บริหารคณะ',
+                        sortable: true,
+                        editable: {
+                            type: 'select2',
+                            title: 'เลือกผู้บริหารคณะ',
+                            url: 'userDAO.php',
+                            emptytext: 'ไม่มีผู้บริหารคณะ',
+                            inputclass: 'selectWidth',
+                            source: function () {
+                                return facultyUser;
+                            },
+                            params: function func(params) {
+                                getFacultyPk(params);
+                                params.func = 'updateFacultyPosition';
+                                return params;
+                            },
+                            success: function () {
+                                getFacultyUser();
+                            }
+                        }
+
+                    },{
+                        field: 'position',
+                        title: 'ตำแหน่ง',
+                        sortable: true,
+                        editable: {
+                            type: 'select2',
+                            title: 'เลือกต่ำแหน่ง',
+                            url: 'userDAO.php',
+                            emptytext: 'ไม่มีผู้บริหารคณะ',
+                            inputclass: 'selectWidth',
+                            source: function () {
+                                return facultyPosition;
+                            },
+                            params: function func(params) {
+                                getFacultyPk(params);
+                                params.func = 'updateFacultyPosition';
+                                return params;
+                            },
+                            success: function () {
+                                getFacultyUser();
+                            }
+                        }
+                    }
+                    ],
+//                    data: response
+                });
+                $faculty.bootstrapTable('load', facultyUserPosition);
+            }
+        });
+    }
+
+    function getFacultyPk(params){
+        $.each(facultyUserPosition, function (i,positionUser) {
+            if(params.pk == positionUser.index){
+                params.facultyId = positionUser.faculty_id;
+                params.userId  = positionUser.user_id;
+                params.position  = positionUser.position;
+            }
+        });
+        return params;
+    }
+
+    //เพิ่มผู้บริหารคณะ
+//    $(document).ready(function () {
+//        $("#addPositionUser").submit(function () {
+//            var data = $(this).serialize() + '&' + $.param({func: 'addPositionUser', faculty_id: user.faculty_id});
+//            $.ajax({
+//                type: 'POST',
+//                url: 'userDAO.php',
+//                data: data,
+//                dataType: 'html',
+//                success: function (response) {
+//                    if (response == "success") {
+//                        getFacultyUser();
+//                    } else {
+//                        var error = "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11 top-15\" role=\"alert\">" +
+//                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+//                                "<span aria-hidden=\"true\">&times;</span>" +
+//                                "</button>" +
+//                                "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+//                                "<strong>Error!</strong> " + response +
+//                                "</div>";
+//
+//                        $("#positionError").append(error);
+//                    }
+//                }
+//            });
+//            return false;
+//        });
+//    });
+
+    //ลบผู้บริหารคณะ
+    $(document).ready(function () {
+        //กด checkbox ตรง table ปุ่ม ลบข้อมูล จะไม่ disable
+        $faculty.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $positionRemove.prop('disabled', !$faculty.bootstrapTable('getSelections').length);
+        });
+//        $positionRemove.click(function () {
+//            var data = $faculty.bootstrapTable('getSelections');
+//            $.ajax({
+//                type: 'POST',
+//                url: 'userDAO.php',
+//                data: {func: 'removePositionUser', data: data},
+//                success: function () {
+//                    getFacultyUser();
+//                }
+//            });
+//            $positionRemove.prop('disabled', true);
+//        });
+    });
+
+
+
+    //ฟังก์ชั่น เช็ดลบข้อมูล
+    function checkRemoveData() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบข้อมูล",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้",
+            popout: true,
+            singleton: true,
+            container: 'body',
+            onConfirm: function () {
+                //ลบข้อมูลผ่าน ajax
+
+                //ข้อมูล จาก table ที่ selected จาก checkbox
+                var data = $faculty.bootstrapTable('getSelections');
+                $.ajax({
+                    type: 'POST',
+                    url: 'userDAO.php',
+                    data: {func: 'removePositionUser', data: data},
+                    success: function () {
+                        getFacultyUser();
+                    }
+                });
+                $positionRemove.prop('disabled', true);
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+    //ตรวจสอบข้อมูลก่อน submit เป็นช่องว่างหรือว่า email ซ้ำไหม
+    $(document).ready(function () {
+        $('#addPositionUser').formValidation({
+            framework: 'bootstrap',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            locale: 'th_TH',
+            fields: {
+                user_id: {
+                    validators: {
+                        notEmpty: {
+                            message: 'กรุณาเลือกผู้บริหาร'
+                        },
+                        callback: {
+                            message: 'มีผู้บริหารนี้ในระบบแล้ว',
+                            callback: function (value, validator, $field) {
+
+                                //เช็คว่า email ซ้ำไหม
+                                var checkUser = true;
+                                // Determine the numbers which are generated in captchaOperation
+                                $.each(facultyUserPosition, function (i, facultyUser) {
+                                    if (facultyUser.user_id == value) {
+                                        checkUser = false;
+                                    }
+                                });
+
+                                return checkUser;
+
+                            }
+                        }
+                    }
+                },
+                position: {
+                    validators: {
+                        notEmpty: {
+                            message: 'กรุณาเลือกต่ำแหน่ง'
+                        }
+                    }
+                }
+
+            }
+        }).on('success.form.fv', function (e) {
+            // Prevent form submission
+            e.preventDefault();
+
+            // Some instances you can use are
+            var $form = $(e.target),        // The form instance
+                    fv = $(e.target).data('formValidation'); // FormValidation instance
+
+            var data = $(this).serialize() + '&' + $.param({func: 'addPositionUser', faculty_id: user.faculty_id});
+            $.ajax({
+                type: 'POST',
+                url: 'userDAO.php',
+                data: data,
+                dataType: 'html',
+                success: function (response) {
+                    if (response == "success") {
+                        getFacultyUser();
+                    } else {
+                        var error = "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11 top-15\" role=\"alert\">" +
+                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+                                "<span aria-hidden=\"true\">&times;</span>" +
+                                "</button>" +
+                                "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+                                "<strong>Error!</strong> " + response +
+                                "</div>";
+
+                        $("#positionError").append(error);
+                    }
+                }
+            });
+
+            $('#addPositionUser').bootstrapValidator('resetForm', true);
+
+        });
+    });
+
+</script>
+
+
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-user right-5" aria-hidden="true"></i> ผู้บริหารคณะ <small>(ผู้ดูแลระบบของคณะ)</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ตั้งค่าบัญชีผู้ใช้ (Admin คณะ)</li>
+                <li class="active">ผู้บริหารคณะ</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 ">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10 col-xs-12 top-20">
+            <form class="form-inline" id="addPositionUser">
+
+
+                <!--ต่ำแหน่ง-->
+                <div class="form-group">
+                    <label class="top-5" for="facultyUserSelect">ผู้บริหาร : </label>
+                </div>
+                <div class="form-group selectContainer">
+                    <select class="selectpicker" name="user_id" data-size="10" data-width="auto" data-live-search="true" id="facultyUserSelect" title="เลือกผู้บริหาร">
+
+                    </select>
+                </div>
+
+
+                <!--ต่ำแหน่ง-->
+                <div class="form-group">
+                    <label class="top-5 left-20" for="positionSelect">ต่ำแหน่ง : </label>
+                </div>
+                <div class="form-group selectContainer">
+                    <select class="selectpicker" name="position" data-width="auto" data-live-search="true" id="positionSelect" title="เลือกต่ำแหน่ง">
+
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary left-20">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> บันทึกข้อมูล
+                </button>
+
+                <div id="positionError" class="left-20"></div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 top-20">
+            <div id="positionToolbar">
+                <button id="positionRemove" class="btn btn-danger" data-toggle="confirmation" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> ลบข้อมูล
+                </button>
+            </div>
+            <table id="fac_pre" data-id-field="index" data-toolbar="#positionToolbar">
+            </table>
+        </div>
+    </div>
+
+</div>

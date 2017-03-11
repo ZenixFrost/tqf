@@ -1,0 +1,389 @@
+<style>
+    .selectWidth {
+        width: 400px;
+    }
+
+</style>
+
+<script>
+    $(document).ready(function () {
+        getMajorUser();
+        getCourseUser();
+
+    });
+
+    ///////////////////////////////////////////////////MAJOR TABLE/////////////////////////////////////////////////////////
+    var $table = $('#table');
+    var majorUserData;
+    var courseId;
+
+
+    //user ทั้งหมดของสาขาที่กำหนด
+    function getMajorUser() {
+        console.log(user.major_id);
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getMajorUser', val: user.major_id},
+            dataType: 'json',
+            success: function (response) {
+                majorUserData = response;
+                getCourseId();
+            },
+            error: function () {
+                alert("Don't have any data.");
+            }
+        });
+    }
+
+    //get Course Id ทั้งหมดของสาขาที่กำหนด
+    function getCourseId(){
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getAllCourse', val: user.major_id},
+            dataType: 'json',
+            success: function(response){
+                courseId = response;
+                majorUserTable();
+            }
+        });
+    }
+
+    //major user table
+    function majorUserTable() {
+        var userDetail = [{
+                title: 'รายละเอียดบัญชี',
+                colspan: 5,
+                align: 'center'
+            }, {
+                title: 'ผู้ดูแลระบบของหลักสูตร',
+                colspan: 3,
+                align: 'center'
+            }
+        ];
+
+        var majorTableData =[{
+                field: 'state',
+                checkbox: true
+            },{
+                title: 'ลำดับ',
+                formatter: function (value, row, index) {
+                    return [index+1].join('  ');
+                },
+                width: '1%',
+                align: 'center'
+
+            },{
+                field: 'name',
+                title: 'ชื่อ',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'Enter username',
+                    url: 'majorUserDAO.php',
+                    name: 'name',
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        return params;
+                    },
+                    success: function () {
+                        getCourseUser();
+                        getMajorUser();
+                    }
+                }
+            },{
+                field: 'surname',
+                title: 'นามสกุล',
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'Enter surname',
+                    url: 'majorUserDAO.php',
+                    name: 'surname',
+                    params: function func(params) {
+                        params.func = 'updateUser';
+                        return params;
+                    },
+                    success: function () {
+                        getCourseUser();
+                        getMajorUser();
+                    }
+                }
+            },{
+                field: 'user_id',
+                title: 'อีเมล์',
+
+                sortable: true,
+                editable: {
+                    type: 'text',
+                    title: 'Enter email',
+                    url: 'majorUserDAO.php',
+                    name: 'user_id',
+                    params: function func(params) {
+                        params.func = 'updateUser';  //เพิ่ม params func เข้าไป
+                        return params;
+                    },
+                    success: function () {
+                        getCourseUser();
+                        getMajorUser();
+                    }
+                }
+            }
+        ];
+
+        ///เพิ่ม key และ value ของ course มาทีหลัง
+        $.each(courseId,function (i,course) {
+            var curCourseId = course.course_id;
+            majorTableData.push({
+                field: curCourseId,
+                title: curCourseId,
+                align: 'center',
+                sortable: true,
+                cellStyle:function cellStyle(value, row, index, field) {
+                    return {
+                        css: {"font-size": "150%"}
+                    };
+                },
+                width:"15%",
+                editable: {
+                    type: 'select',
+                    title: 'Select status',
+                    url: 'majorUserDAO.php',
+                    name: curCourseId,
+                    source: [
+                        {value: 1, text: '✔'},
+                        {value: 0, text: '-'}
+                    ],
+                    params: function(params) {
+                        params.func = 'updateCourseAdmin';
+                        return params;
+                    },
+                    success: function () {
+                        getCourseUser();
+                        getMajorUser();
+                    }
+                }
+            });
+        });
+
+        $table.bootstrapTable({
+            columns:[userDetail,majorTableData]
+//            data: majorUserData
+        });
+        $table.bootstrapTable('load', majorUserData);
+    }
+
+    //add user
+    $(document).ready(function () {
+        $("#addUser").submit(function () {
+            var data = $(this).serialize() + '&' + $.param({func: 'addUser', major_id: user.major_id});
+            $.ajax({
+                type: 'POST',
+                url: 'majorUserDAO.php',
+                data: data,
+                dataType: 'html',
+                success: function (response) {
+                    if (response == "success") {
+                        getMajorUser();
+                    } else {
+                        var error = "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11 top-15\" role=\"alert\">" +
+                                "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+                                "<span aria-hidden=\"true\">&times;</span>" +
+                                "</button>" +
+                                "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+                                "<strong>Error!</strong> " + response +
+                                "</div>";
+
+                        $("#error").append(error);
+                    }
+                }
+            });
+            return false;
+        });
+    });
+
+    var $remove = $('#remove');
+
+    //remove user
+    $(document).ready(function () {
+        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        });
+        $remove.click(function () {
+            var data = $table.bootstrapTable('getSelections');
+            $.ajax({
+                type: 'POST',
+                url: 'majorUserDAO.php',
+                data: {func: 'removeUser', data: data},
+                success: function () {
+                    getMajorUser();
+                }
+            });
+            $remove.prop('disabled', true);
+        });
+    });
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    ////////////////////////////////////////////////////กำหนดประธานหลักสูตร/////////////////////////////////////////////////////
+    var courseUser;
+    $course = $('#course_pre');
+
+    //ประธานหลักสูตร
+    function getCourseUser() {
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getCourseUser', val: user.major_id},
+            dataType: 'json',
+            success: function (response) {
+                courseUser = response;
+                getCourse();
+            }
+        })
+    }
+
+    //หลักสูตร
+    function getCourse() {
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getCourse', val: user.major_id},
+            dataType: 'json',
+            success: function (response) {
+
+                $course.bootstrapTable({
+                    columns: [{
+                        field: 'course_id',
+                        title: 'หลักสูตร',
+
+                    }, {
+                        field: 'course_president_id',
+                        title: 'ประธานคณะ',
+                        editable: {
+                            type: 'select2',
+                            title: 'Select course president',
+                            url: 'majorUserDAO.php',
+                            name: 'course_president_id',
+                            emptytext: 'ไม่มีประธานคณะ',
+                            inputclass: 'selectWidth',
+                            source: function () {
+                                return courseUser;
+                            },
+                            params: function func(params) {
+                                params.func = 'updateCourseUser';
+                                params.major_id = user.major_id;
+                                return params;
+                            },
+                            success: function () {
+                                getCourseUser();
+                            }
+                        }
+                    }
+                    ],
+//                    data: response
+                });
+                $course.bootstrapTable('load', response);
+            }
+        });
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+</script>
+
+
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="glyphicon glyphicon-file"></i> หน้าจอกำหนดบัญชีผู้ใช้<small> (ผู้ดูแลของสาขา)</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ตั้งค่าบัญชีผุ้ใช้ (Admin สาขา)</li>
+                <li class="active">กำหนดบัญชีผู้ใช้</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <form class="form-inline" id="addUser">
+
+            <div class="form-group left-20">
+                <label for="name"><h4>ชื่อ : </h4></label>
+                <input type="text" class="form-control" name="name" id="name" placeholder="name" required="required">
+
+            </div>
+            <div class="form-group left-20">
+                <label for="surname"><h4>นามสกุล : </h4></label>
+                <input type="text" class="form-control" name="surname" id="surname" placeholder="surname"
+                       required="required">
+            </div>
+            <div class="form-group left-20">
+                <label for="user_id"><h4>อีเมล : </h4></label>
+                <input type="email" class="form-control" name="user_id" id="user_id" placeholder="email"
+                       required="required">
+            </div>
+            <button class="btn btn-primary left-20">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> เพิ่มบัญชี
+            </button>
+            <div id="error"></div>
+
+        </form>
+    </div>
+
+    <div class="row top-20 right-20">
+        <div class="col-md-12">
+
+            <div id="toolbar">
+                <button id="remove" class="btn btn-danger" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> Delete
+                </button>
+            </div>
+            <table id="table"
+                   data-id-field="user_id"
+                   data-toggle="table"
+                   data-pagination="true"
+                   data-search="true"
+
+                   data-show-pagination-switch="true"
+                   data-toolbar="#toolbar"
+                   data-show-columns="true"
+                   data-page-size="15"
+                   data-page-list="[15, 30, 50, 100]"
+                   data-height="712">
+            </table>
+
+        </div>
+    </div>
+
+    <div class="row top-20 right-20">
+        <div class="col-md-12">
+
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            <strong>กำหนดประธานหลักสูตร</strong>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+
+                        <table id="course_pre" data-id-field="course_id">
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

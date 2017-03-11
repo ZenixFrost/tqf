@@ -1,0 +1,180 @@
+<style>
+    .selectWidth {
+        width: 300px;
+    }
+
+</style>
+
+<script>
+    ////////////////////////////////////////////////////กำหนดประธานสาขา//////////////////////////////////////////////////////
+    var majorUser;
+    var dataMajor;
+    var selectMajorUser;
+    $major = $('#major_pre');
+
+    $(function () {
+        getMajorUser();
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+"</h3>");
+    });
+
+    //sector user ของคณะที่กำหนด
+    function getMajorUser() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getMajorUser', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                majorUser = response;
+                getMajor();
+            }
+        });
+    }
+
+
+    //data major and pre
+    function getMajor() {
+//        var i = 0;
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getMajor', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+
+                dataMajor = response;
+                majorTable();
+            }
+        });
+    }
+
+    //Table สาขา และ ประธานสาขา
+    function majorTable() {
+        var i = 0;
+        $major.bootstrapTable({
+            columns: [{
+                title: 'ลำดับ',
+                width: '1%',
+                formatter: function (value, row, index) {
+                    return [index+1].join('  ');
+                },
+                align: 'center'
+            },{
+                field: 'sector_id',
+                title: 'ภาควิชา',
+                formatter: sectorFormatter
+            },{
+                field: 'major_id',
+                title: 'สาขา',
+                width: '45%'
+            }, {
+                field: 'major_president_id',
+                title: 'หัวหน้าสาขา',
+                editable: {
+                    type: 'select2',
+                    title: 'เลือกหัวหน้าสาขา',
+                    url: 'userDAO.php',
+                    name: 'major_president_id',
+                    emptytext: 'ไม่มีหัวหน้าสาขา',
+                    inputclass: 'selectWidth',
+                    source: function () {
+                        if (i >= dataMajor.length) {
+                            i = 0;
+                        }
+                        var curMajor = dataMajor[i].major_id;
+                        var curPre = dataMajor[i].major_president_id;
+
+                        SelectMajorUser();
+
+                        function SelectMajorUser() {
+                            selectMajorUser = [];
+                            var checkPre = false;
+
+                            $.each(majorUser, function (j, user) {
+                                if (curMajor == user.major_id) {
+                                    selectMajorUser.push({
+                                        'id': user.user_id,
+                                        'text': user.name + " " + user.surname
+                                    });
+
+                                    if (curPre == user.user_id || curPre == null) {
+                                        checkPre = true;
+                                    }
+                                }
+
+                            });
+
+                            if (checkPre == false) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: 'userDAO.php',
+                                    data: {func: 'setNullMajorUser', pk: curMajor}
+                                });
+                            }
+                        }
+
+                        i++;
+                        return selectMajorUser;
+                    },
+                    params: function func(params) {
+                        params.func = 'updateMajorUser';
+                        return params;
+                    },
+                    success: function () {
+                        getMajorUser();
+                    }
+                }
+            }
+            ]
+
+        });
+        i = 0;
+        $major.bootstrapTable('load', dataMajor);
+    }
+
+
+    var sector;
+    //format ของภาควิชา sector ที่จะโชว์แค่อันแรก
+    function sectorFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && sector == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        sector = value;
+        return [ val].join('');
+
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-user right-5" aria-hidden="true"></i> หัวหน้าสาขา <small>(ผู้ดูแลระบบของคณะ)</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ตั้งค่าบัญชีผู้ใช้ (Admin คณะ)</li>
+                <li class="active">หัวหน้าสาขา</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-lg-9 top-20">
+            <table id="major_pre" data-id-field="major_id"></table>
+        </div>
+    </div>
+
+</div>
+

@@ -1,0 +1,109 @@
+<style>
+    .selectWidth {
+        width: 300px;
+    }
+</style>
+
+<script>
+    var courseUser;
+    $course = $('#course_pre');
+
+    $(function () {
+        getCourseUser();
+        $("#showDetail").append("<h3>สาขา : "+user.major_id+"</h3>");
+    });
+
+    //ประธานหลักสูตร
+    function getCourseUser() {
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getCourseUser', val: user.major_id},
+            dataType: 'json',
+            success: function (response) {
+                courseUser = response;
+                getCourse();
+            }
+        })
+    }
+
+    //หลักสูตร
+    function getCourse() {
+        $.ajax({
+            type: 'POST',
+            url: 'majorUserDAO.php',
+            data: {func: 'getCourse', val: user.major_id},
+            dataType: 'json',
+            success: function (response) {
+
+                $course.bootstrapTable({
+                    columns: [{
+                        title: 'ลำดับ',
+                        width: '1%',
+                        formatter: function (value, row, index) {
+                            return [index+1].join('  ');
+                        },
+                        align: 'center'
+                    },{
+                        field: 'course_id',
+                        title: 'หลักสูตร'
+
+                    }, {
+                        field: 'course_president_id',
+                        title: 'ประธานหลักสูตร',
+                        editable: {
+                            type: 'select2',
+                            title: 'เลือกประธานหลักสูตร',
+                            url: 'majorUserDAO.php',
+                            name: 'course_president_id',
+                            emptytext: 'ไม่มีประธานหลักสูตร',
+                            inputclass: 'selectWidth',
+                            source: function () {
+                                return courseUser;
+                            },
+                            params: function func(params) {
+                                params.func = 'updateCourseUser';
+                                params.major_id = user.major_id;
+                                return params;
+                            },
+                            success: function () {
+                                getCourseUser();
+                            }
+                        }
+                    }
+                    ],
+//                    data: response
+                });
+                $course.bootstrapTable('load', response);
+            }
+        });
+    }
+</script>
+
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-user right-5" aria-hidden="true"></i> ประธานหลักสูตร<small> (ผู้ดูแลระบบของสาขา)</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ตั้งค่าบัญชีผุ้ใช้ (Admin สาขา)</li>
+                <li class="active">ประธานหลักสูตร</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 top-20">
+            <table id="course_pre" data-id-field="course_id"></table>
+        </div>
+    </div>
+</div>

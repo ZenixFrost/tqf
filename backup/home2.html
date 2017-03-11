@@ -1,0 +1,369 @@
+<style>
+    .treeview ul li {
+        height: 30px;
+    }
+
+    .jumbotron{
+        padding: 20px 0 40px 0;
+    }
+
+</style>
+
+<script>
+    var year;
+    var facultyId = user.faculty_id;
+    var courseId;
+
+
+    $(function () {
+        getFaculty();
+        getCourseTree();
+        getCurYear();
+        $("#showTable").hide();
+    });
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน แล้วโชว์ตรงที่กดปี
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                year = response;
+                $("#showYear").html(year);
+            }
+        });
+    }
+
+    //Tree view ของคณะ
+    function getCourseTree() {
+        $.ajax({
+            type: 'POST',
+            url: 'viewTqfFile.php',
+            data: {func: 'getCourse', faculty_id: facultyId},
+            dataType: 'json',
+            success: function (response) {
+                var tree = '[';
+
+                var oldSector;
+                var oldMajor;
+                var viewTree;
+                $.each(response,function (i,course) {
+                    var courseLink = "<a class=course id="+course.course_id+"> หลักสูตร"+course.course_id+"</a>";
+                    var sector = "ภาควิชา"+course.sector_id;
+                    var major = "สาขาวิชา"+course.major_id;
+
+                    var sectorIcon = "glyphicon glyphicon-stop";
+                    var majorIcon = "glyphicon glyphicon-unchecked";
+                    var courseIcon = "glyphicon glyphicon-chevron-right";
+
+
+                    if(i == 0) {
+                        tree += '{' +
+                                '"text":" ' + sector + '",' +
+                                '"icon": "' + sectorIcon + '",'+
+                                '"nodes": [{' +
+                                        '"text":"' + major + '",' +
+                                        '"icon": "' + majorIcon + '",'+
+                                        '"state": {"expanded": true},' +
+                                        '"nodes": [{"text":"' + courseLink + '",'+
+                                                    '"icon": "' + courseIcon + '"}';
+                    }else {
+
+                        if (oldMajor == course.major_id) {
+                            tree += '{"text":"' + courseLink + '",'+
+                                    '"icon": "' + courseIcon + '"}';
+                        } else if (oldMajor != course.major_id && oldSector == course.sector_id) {
+                            tree += ']},' +
+                                    '{' +
+                                        '"text":"' + major + '",' +
+                                        '"icon": "' + majorIcon + '",'+
+                                        '"state": {"expanded": true},' +
+                                        '"nodes": [{"text":"' + courseLink + '",'+
+                                                    '"icon": "' + courseIcon + '"}';
+                        } else if (oldSector != course.sector_id) {
+                            tree += ']' +
+                                    '}]' +
+                                    '},' +
+                                    '{"text":" ' + sector + '",' +
+                                    '"icon": "'+sectorIcon+'",'+
+
+                                    '"nodes": [{' +
+                                    '"text":"' + major + '",' +
+                                    '"icon": "' + majorIcon + '",'+
+                                    '"state": {"expanded": true},' +
+                                    '"nodes": [{"text":"' + courseLink + '",'+
+                                                '"icon": "' + courseIcon + '"}';
+                        }
+                    }
+
+                    oldMajor = course.major_id;
+                    oldSector = course.sector_id;
+
+                    if((i+1) < response.length){
+                        if((response[i+1]["major_id"] == oldMajor)){
+                            tree += ", ";
+                        }
+
+                    }
+
+                });
+
+                tree += ']' +
+                        '}]' +
+                        '}]';
+
+
+
+                if(response.length == 0){
+                    var alert = "<div class='alert alert-danger top-20' role='alert'>" +
+                                    "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span> " +
+                                    "<strong>แจ้งเตือน!</strong> ไม่มีข้อมูลของ "+facultyId+
+                                "</div>";
+                    $("#tree").html(alert);
+                }else{
+                    viewTree = JSON.parse(tree);
+                    $('#tree').treeview({
+                        selectedBackColor: "#ededed",
+                        selectedColor: "#000000",
+                        showBorder: false,
+                        data: viewTree
+                    });
+                }
+
+            }
+        });
+    }
+
+
+    //event ตอนเปลี่ยนคณะ
+    $("#selectFaculty").on('change',function () {
+        facultyId = $("#selectFaculty").val();
+        getCourseTree();
+    });
+
+
+    //event ตอนกดเลือกหลักสูตร course
+    $(document).on('click',".course",function () {
+        courseId = $(this).attr('id');
+        $("#showTree").hide();
+        $("#showTable").show();
+        $("#showCourse").html(courseId);
+        courseTable();
+    });
+
+
+    //กดย้อนกลับไปหน้าเลือก หลักสูตร
+    $("#back").on('click',function () {
+        $("#showTree").show();
+        $("#showTable").hide();
+        return false;
+    });
+
+
+    //select ของ คณะ โดยจะโชว์คณะทั้งหมด
+    function getFaculty(){
+        $.ajax({
+            type: 'POST',
+            url: 'viewTqfFile.php',
+            data: {func: 'getFaculty', faculty_id:user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                var optionFaculty = "";
+                $.each(response,function (i,faculty) {
+                    if(faculty.faculty_id == user.faculty_id){
+                        optionFaculty += "<option value='"+faculty.faculty_id+"' selected>"+faculty.faculty_id+"</option>";
+                    }else{
+                        optionFaculty += "<option value="+faculty.faculty_id+">"+faculty.faculty_id+"</option>";
+                    }
+                });
+                $("#selectFaculty").html(optionFaculty).selectpicker('refresh');
+            }
+        })
+    }
+
+    var yearData;
+
+    //โครงของ tqf course table
+    function courseTable() {
+        var coursePanel;
+        var schoolYear;
+
+        $.when($.ajax({
+            type: 'POST',
+            url: 'viewTqfFile.php',
+            data: {func: 'getCourseYear', course_id: courseId ,year: year},
+            dataType: 'json',
+            success: function (response) {
+                schoolYear = "";
+                yearData = response;
+            }
+        })).then(function (yearData) {
+
+            $.each(yearData, function (i, year) {
+
+                schoolYear +=
+                        "<div class='row'>"+
+                            "<div class='col-md-12'>"+
+
+                                "<div class='well well-sm top-20'>" +
+                                    "<h4><i class=\"glyphicon glyphicon-calendar\"></i>\u00A0<strong>ภาคเรียน ปี " + year.year + " เทอม " + year.term + "</strong></h4>" +
+                                "</div>"+
+
+                                "<div class='top-30'>"+
+                                    "<table id=courseTable" + i + ">"+
+                                    "</table>"+
+                                "</div>"+
+
+                                "<div class='top-10'></div>"+
+
+                            "</div>"+
+                        "</div>";
+
+            });
+
+            if (schoolYear.length == 0) {
+                schoolYear = "<div class='alert alert-danger top-20' role='alert'>" +
+                        "<span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span> " +
+                        "<strong>แจ้งเตือน!</strong> ไม่มีข้อมูลในปี "+year+" หลักสูตร "+courseId+
+                        "</div>";
+            }
+            coursePanel = schoolYear;
+            $("#table").html(coursePanel);
+            courseDataTable();
+        });
+
+    }
+
+
+    //data ของ course table
+    function courseDataTable() {
+
+        $.each(yearData, function (i, year) {
+            $.ajax({
+                type: 'POST',
+                url: 'viewTqfFile.php',
+                data: {func: 'getCourseDataTable', course_id: courseId, year: year.year, term: year.term},
+                dataType: 'json',
+                success: function (response) {
+
+                    var courseData = response;
+                    console.log(courseData);
+
+                    $table = $("#courseTable" + i);
+                    $table.bootstrapTable({
+                        columns: [{
+                            title: 'ลำดับ',
+                            width: '1%',
+                            formatter: function (value, row, index) {
+                                return [index+1].join('  ');
+                            },
+                            align: 'center'
+                        }, {
+                            field: 'subject_id',
+                            title: 'วิชา',
+                            width: "30%",
+                            formatter: function (value, row) {
+                                return [row.subject_id, row.subject_name].join(' - ');
+                            },
+                            sortable: true
+                        }, {
+                            field: 'file_id',
+                            title: 'มคอ. 3/4',
+                            formatter: tqfOperateFormatter
+                        }
+                        ]
+                    });
+
+                    $table.bootstrapTable('load', courseData);
+
+                }
+            });
+        });
+
+    }
+
+    //upload file button ปุ่มอัพโหลดไฟล์รายงาน
+    function tqfOperateFormatter(value, row, index) {
+
+        if(row["file_id"] != null){
+            return [
+                "<a class=\"btn btn-primary right-15\" href=./server/php/files/" + row["file_id"] + " target=\"blank\">",
+                '<i class="glyphicon glyphicon-download-alt"></i> Download PDF</a>'
+            ].join('');
+        }else{
+            return [
+                "<strong><span style='color: red'>ยังไม่ได้ส่ง<span></strong>"
+            ].join('');
+        }
+    }
+
+    //ลบปี
+    $("#old").on('click',function () {
+        year--;
+        $("#showYear").html(year);
+        courseTable();
+    });
+
+    //เพิ่มปี
+    $("#new").on('click',function () {
+        year++;
+        $("#showYear").html(year);
+        courseTable();
+    });
+
+    //ปีปัจจุบัน
+    $("#showYear").on('click',function () {
+        courseTable();
+    });
+
+</script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="glyphicon glyphicon-home right-5"></i> หน้าแรก</h1>
+    </div>
+
+
+    <div id="showTree">
+        <label for="selectFaculty"><h4>คณะ : </h4></label>
+        <select class="selectpicker" name="selected" data-live- search="true" id="selectFaculty" data-width="300px">
+        </select>
+        <div id="tree" class="top-10"></div>
+    </div>
+
+
+    <div id="showTable">
+        <nav aria-label="...">
+            <ul class="pager">
+                <li class="previous"><a href="" id="back"><span aria-hidden="true">&larr;</span> ย้อนกลับ</a></li>
+            </ul>
+        </nav>
+        <div>
+            <h4>
+                ปีการศึกษา :
+                <div class="btn-group" role="group" >
+                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+                    <button type="button" id="showYear" class="btn btn-default"></button>
+
+                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                </div>
+            </h4>
+        </div>
+
+        <div>
+            <h4 class="top-20">
+                หลักสูตร : <span id="showCourse"></span>
+            </h4>
+        </div>
+
+        <div id="table">
+
+        </div>
+
+    </div>
+
+
+</div>

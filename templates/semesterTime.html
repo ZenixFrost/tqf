@@ -1,0 +1,613 @@
+<style>
+    thead th {
+        background-color: #f5f5f5;
+
+    }
+
+    #semesterData .selectContainer .form-control-feedback {
+        /* Adjust feedback icon position */
+        right: 38px;
+    }
+</style>
+
+<script>
+    $(document).ready(function () {
+        getCurYear();
+        checkRemoveData();
+//        console.log(moment("31-12-2011", "DD-MM-YYYY").add(543,'years').format('DD/MM/YYYY'));
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+"</h3>");
+    });
+
+    var yearId;
+    var semesterData;
+    var $table = $("#table");
+
+    var year;
+
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                yearId = response;
+                year = response;
+                $("#showYear").html(yearId);
+
+                var y = moment(yearId, "YYYY");
+                $('#year').datetimepicker({
+                    allowInputToggle: true,
+                    format: 'YYYY',
+                    defaultDate: y
+                });
+                getSemesterData();
+                changCourse();
+            }
+        });
+    }
+
+
+    function getSemesterData(){
+        $.ajax({
+            type: 'POST',
+            url: 'semesterTimeDAO.php',
+            data: {func : "getSemesterTime" ,faculty_id: user.faculty_id ,year: yearId },
+            dataType: 'json',
+            success: function(response){
+                semesterData = response;
+                semesterTable();
+            }
+        });
+    }
+
+    function semesterTable(){
+        $table.bootstrapTable({
+            columns: [{
+                field: 'state',
+                checkbox: true,
+                width: '5%'
+            },{
+                field: 'term',
+                title: 'ภาคเรียน',
+                align: 'center',
+                width: '10%',
+                formatter: termFormatter
+            }, {
+                field: 'start_semester',
+                title: 'เวลาเปิดภาคเรียน',
+                width: '35%',
+                formatter: startSemesterFormatter
+            }, {
+                field: 'end_semester',
+                title: 'เวลาปิดภาคเรียน',
+                width: '35%',
+                formatter: endSemesterFormatter
+            }
+            ]
+
+        });
+        $table.bootstrapTable('load', semesterData);
+    }
+
+
+    var term;
+
+    //format ของภาควิชา term ที่จะโชว์แค่อันแรก
+    function termFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && term == value){
+            val = "";
+        }else{
+            val = value+"/"+row["year"];
+        }
+
+        term = value;
+        return [val].join('');
+    }
+
+    //ที่กดแก้ไขวันที่ (icon)
+    var edit = '<a href="" class="pull-right editDate"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>';
+
+    function startSemesterFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('DD/MM/YYYY');
+        return ['<span class="dateDate" field="start_semester" term='+row["term"]+' tabindex='+index+'>'+val+'</span>',edit].join('');
+    }
+
+    function endSemesterFormatter(value, row, index){
+        var val;
+        val = moment(value, "YYYY-MM-DD").add(543,'years').format('DD/MM/YYYY');
+        return ['<span class="dateDate" field="end_semester" term='+row["term"]+' tabindex='+index+'>'+val+'</span>',edit].join('');
+    }
+
+    //ข้อมูลเก่า
+    var oldElem;
+    var oldDataDate;
+    var oldTabIndex;
+    var oldField;
+    var oldTermId;
+
+    //ข้อมูลปัจจุบัน
+    var elem;
+    var dataDate;
+    var tabIndex;
+    var field;
+    var termId;
+
+    var dateId;
+
+    //กดแก้ไข้เวลาตรง table
+    $table.on('click',".editDate",function () {
+        elem = $(this).parent();
+        dataDate = $(".dateDate" , $(this).parent()).text();
+        tabIndex = $(".dateDate" , $(this).parent()).attr('tabindex');
+        field = $(".dateDate" , $(this).parent()).attr('field');
+        termId = $(".dateDate" , $(this).parent()).attr('term');
+
+
+        dateId = "dateIndex"+tabIndex;
+
+
+        var date = "<div class=\"form-inline\">" +
+
+                "<div class=\"form-group\">" +
+                    "<div class=\"input-group\">" +
+                        "<input type=\"text\" name=\"holiday\" id="+dateId+" class=\"form-control\" required=\"required\" style='width: 150px' >" +
+                        "<span class=\"input-group-addon\">" +
+                            "<i class=\"glyphicon glyphicon-th\"></i>" +
+                        "</span>" +
+                    "</div>"+
+                "</div>"+
+
+                "<div class=\"form-group pull-right\">\n" +
+                    "<button type='button' class='btn btn-success submit'><span class='glyphicon glyphicon-ok' aria-hidden='true'></span></button> "+
+                    "<button type='button' class='btn btn-danger cancel'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button>"+
+                "</div>"+
+
+
+                "</div>";
+
+        if(oldDataDate != null){
+            oldElem.html('<span class="dateDate" field='+oldField+' term='+oldTermId+' tabindex='+oldTabIndex+'>'+oldDataDate+'</span>'+edit);
+        }
+
+        oldTabIndex = tabIndex;
+        oldElem  = $(this).parent();
+        oldDataDate = dataDate;
+        oldField = field;
+        oldTermId = termId;
+
+        elem.html(date).hide().fadeIn('fast');
+        getDateEditing(dateId,dataDate);
+
+        return false;
+    });
+
+    //กดยกเลิกแก้ไขเวลา ตรง table
+    $table.on('click',".cancel",function () {
+        oldElem = null;
+        oldDataDate = null;
+        oldTabIndex = null;
+        oldField = null;
+        oldTermId = null;
+        elem.html('<span class="dateDate" field='+field+' term='+termId+' tabindex='+tabIndex+'>'+dataDate+'</span>'+edit).hide().fadeIn('fast');
+    });
+
+    //กดตกลงเพื่อแก้ไขข้อมูลเวลาใน db
+    $table.on('click',".submit",function () {
+        var newDateData = $("#"+dateId).val();
+
+        if(newDateData == dataDate){
+            oldElem = null;
+            oldDataDate = null;
+            oldTabIndex = null;
+            oldField = null;
+            oldTermId = null;
+            elem.html('<span class="dateDate" field='+field+' term='+termId+' tabindex='+tabIndex+'>'+dataDate+'</span>'+edit).hide().fadeIn('fast');
+        }else{
+            $.ajax({
+                type: 'POST',
+                url: 'semesterTimeDAO.php',
+                data: {func: 'updateSemesterTime' ,year: yearId, term: termId , name: field, value:newDateData ,faculty_id: user.faculty_id},
+                success: function () {
+                    getSemesterData();
+                }
+            });
+        }
+    });
+
+    //โชว์วันที่ตอนแก้ไข table
+    function getDateEditing(dateId,dataDate){
+        var showDate = moment(dataDate, "DD/MM/YYYY").subtract(543,'years').format('DD/MM/YYYY');
+
+        $("#"+dateId).datepicker({
+            format: 'dd/mm/yyyy',
+            todayBtn: true,
+            todayHighlight: true,
+            autoclose: true,
+            orientation :  "bottom",
+            language: 'th',             //เปลี่ยน label ต่างของ ปฏิทิน ให้เป็น ภาษาไทย   (ต้องใช้ไฟล์ bootstrap-datepicker.th.min.js นี้ด้วย)
+            thaiyear: true              //Set เป็นปี พ.ศ.
+        }).datepicker("setDate", showDate);  //กำหนดเป็นวันปัจุบัน
+    }
+
+    $(document).ready(function () {
+        $('.dateTime').datepicker({
+            format: 'dd/mm/yyyy',
+            orientation :  "bottom",
+            language: 'th',             //เปลี่ยน label ต่างของ ปฏิทิน ให้เป็น ภาษาไทย   (ต้องใช้ไฟล์ bootstrap-datepicker.th.min.js นี้ด้วย)
+            thaiyear: true              //Set เป็นปี พ.ศ.
+        }).datepicker("setDate", "0");  //กำหนดเป็นวันปัจุบัน
+    });
+
+
+    var $remove = $('#remove');
+
+    //remove semesterTime
+    $(document).ready(function () {
+        $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+            $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+        });
+//        $remove.click(function () {
+//            var data = $table.bootstrapTable('getSelections');
+//            $.ajax({
+//                type: 'POST',
+//                url: 'semesterTimeDAO.php',
+//                data: {func: 'removeSemesterTime', data: data},
+//                success: function () {
+//                    getSemesterData();
+//                }
+//            });
+//            $remove.prop('disabled', true);
+//        });
+    });
+
+
+    //ฟังก์ชั่น เช็ดลบข้อมูล
+    function checkRemoveData() {
+        $('[data-toggle=confirmation]').confirmation({
+            rootSelector: '[data-toggle=confirmation]',
+            html: true,
+            title: "ลบข้อมูล",
+            content: "<i class=\"fa fa-exclamation-triangle fa-lg\" style='color: #f0ad4e' aria-hidden=\"true\"></i>\u00A0 คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้",
+            popout: true,
+            singleton: true,
+            container: 'body',
+            onConfirm: function () {
+                //ลบข้อมูลผ่าน ajax
+
+                //ข้อมูล จาก table ที่ selected จาก checkbox
+                var data = $table.bootstrapTable('getSelections');
+                $.ajax({
+                    type: 'POST',
+                    url: 'semesterTimeDAO.php',
+                    data: {func: 'removeSemesterTime', data: data},
+                    success: function () {
+                        getSemesterData();
+                    }
+                });
+                $remove.prop('disabled', true);
+            },
+            buttons: [
+                {
+                    class: 'btn btn-primary',
+                    icon: 'glyphicon glyphicon-ok',
+                    label: 'ตกลง'
+                },
+                {
+                    class: 'btn btn-default',
+                    icon: 'glyphicon glyphicon-remove',
+                    label: 'ยกเลิก',
+                    cancel: true
+                }
+            ]
+        });
+    }
+
+    //add semesterTime
+//    $("#semesterData").on('submit',function () {
+//        var data = $("#semesterData").serialize() + '&' + $.param({func: 'addSemesterTime' , faculty_id: user.faculty_id});
+//
+//        $.ajax({
+//            type: 'POST',
+//            url: 'semesterTimeDAO.php',
+//            data: data,
+//            success: function(){
+//                getSemesterData();
+//            },
+//            error: function () {
+//                var error = "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11\" role=\"alert\">" +
+//                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+//                        "<span aria-hidden=\"true\">&times;</span>" +
+//                        "</button>" +
+//                        "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+//                        "<strong>ผิดพลาด! ไม่สามารถบันทึกข้อมูลได้เนื่องจากมีปีและเทอมนี้อยู่แล้วในฐานข้อมูล</strong> " +
+//                        "</div>";
+//
+//                $("#error").append(error);
+//            }
+//        });
+//        return false;
+//    });
+
+    //////////เปลี่ยนข้อมูลที่โชว์ตรง table ตรงที่บันทึกข้อมูล//////////
+
+    //เปลี่ยนปีแล้วขึ้นข้อมูล จากตรงที่บันทึกข้อมูล
+    function changCourse(){
+        $("#year").on("dp.change",function () {
+            yearId = $("#yearSelect").val();
+            year =   moment(yearId, "YYYY").format('YYYY');
+            $("#showYear").html(year);
+
+            //reset form แล้วใส่ค่าใหม่
+//            $('#semesterData').bootstrapValidator('resetField','term', true);
+//            $('#term').val(1);
+
+
+
+            $('#semesterData').formValidation('updateStatus', 'term', 'NOT_VALIDATED');
+            getSemesterData();
+            return false;
+        });
+    }
+
+
+    //เปลี่ยนปี
+
+    //ลดปี
+    $("#old").on('click',function () {
+        year--;
+        yearId = year;
+        $("#showYear").html(yearId);
+        getSemesterData();
+    });
+
+    //เพิ่มปี
+    $("#new").on('click',function () {
+        year++;
+        yearId = year;
+        $("#showYear").html(yearId);
+        getSemesterData();
+    });
+
+    //กดรี ปีใหม่
+    $("#showYear").on('click',function () {
+        getSemesterData();
+    });
+
+
+
+    //ตรวจสอบข้อมูลก่อน submit ถ้าถูกต้องจึงทำการเพิ่มข้อมูลลง db
+    $(document).ready(function () {
+        $('#semesterData').formValidation({
+            framework: 'bootstrap',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            locale: 'th_TH',
+            fields: {
+                term: {
+                    validators: {
+                        callback: {
+                            message: 'มีเทอมนี้ในระบบแล้ว',
+                            callback: function (value, validator, $field) {
+
+                                //เช็คว่า term ซ้ำไหม
+                                var checkUser = true;
+                                // Determine the numbers which are generated in captchaOperation
+                                $.each(semesterData, function (i, dateData) {
+                                    if (dateData.term == value) {
+                                        checkUser = false;
+                                    }
+                                });
+
+                                return checkUser;
+
+                            }
+                        }
+                    }
+                }
+
+            }
+        }).on('success.form.fv', function (e) {
+            // Prevent form submission
+            e.preventDefault();
+
+            // Some instances you can use are
+            var $form = $(e.target),        // The form instance
+                    fv = $(e.target).data('formValidation'); // FormValidation instance
+
+            var data = $("#semesterData").serialize() + '&' + $.param({func: 'addSemesterTime' , faculty_id: user.faculty_id});
+
+
+
+            var yearData = $("#yearSelect").val();
+            yearData = moment(yearData, "YYYY").format('YYYY');
+            var termData = $("#term").val();
+
+            $.ajax({
+                type: 'POST',
+                url: 'semesterTimeDAO.php',
+                data: data,
+                success: function(){
+                    var status = "<div class=\"alert alert-success alert-dismissible col-xs-9\" role=\"alert\">"+
+                            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>"+
+                            "คุณได้เพิ่มข้อมูลวันเปิด-ปิดภาคเรียนของ <strong> ปี "+yearData+" เทอม "+termData+"</strong> เรียบร้อยแล้ว"+
+                            "</div>";
+                    $("#semesterStatus").html(status);
+
+                    getSemesterData();
+                },
+                error: function () {
+                    var error = "<div id=\"alert\" class=\"alert alert-danger alert-dismissible col-md-11\" role=\"alert\">" +
+                            "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">" +
+                            "<span aria-hidden=\"true\">&times;</span>" +
+                            "</button>" +
+                            "<span class=\"glyphicon glyphicon-remove-sign\" aria-hidden=\"true\"></span> " +
+                            "<strong>ผิดพลาด! ไม่สามารถบันทึกข้อมูลได้เนื่องจากมีปีและเทอมนี้อยู่แล้วในฐานข้อมูล</strong> " +
+                            "</div>";
+
+                    $("#error").append(error);
+                }
+            });
+
+
+            $('#semesterData').bootstrapValidator('resetForm', true);
+
+            $('#year').data("DateTimePicker").date(yearId);
+            $('#term').val(1);
+            $('.dateTime').datepicker("setDate", "0");
+
+        });
+    });
+</script>
+<div class="container-fluid">
+
+    <div class="page-header">
+        <h1><i class="fa fa-calendar-plus-o right-5" aria-hidden="true"></i> วันเปิด-ปิด ภาคเรียน</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ค่าพื้นฐานของระบบ</li>
+                <li class="active">วันเปิด-ปิด ภาคเรียน</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-20">
+            <div class="panel panel-default">
+
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                           aria-expanded="true" aria-controls="collapseOne">
+                            <i class="fa fa-plus" aria-hidden="true"></i> <strong>เพิ่มวัน เปิด-ปิด ภาคเรียน</strong>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+
+                        <form id="semesterData">
+                            <div class="form-inline top-10">
+
+                                <!--ปี-->
+                                <div class="form-group">
+                                    <label class="top-5" for="year">ปี : </label>
+                                </div>
+                                <div class="form-group selectContainer">
+                                    <div class='input-group date' id="year">
+                                        <input type="text" class="form-control" name="year" id="yearSelect" required >
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+
+                                <!--เทอม-->
+                                <div class="form-group">
+                                    <label class="top-5 left-20" for="term">เทอม : </label>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" class="form-control" id="term" name="term" min="1" max="3" value="1" required>
+                                </div>
+
+
+                                <!--วันเปิดภาคเรียน-->
+                                <div class="form-group">
+                                    <label class="top-5 left-20" for="inputdatepicker">วันเปิดภาคเรียน : </label>
+                                </div>
+                                <div class="form-group selectContainer">
+                                    <div class="input-group date dateTime">
+                                        <input type="text" name="start_semester" id="inputdatepicker" class="form-control" required >
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-th"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!--วันเปิดภาคเรียน-->
+                                <div class="form-group">
+                                    <label class="top-5 left-20" for="inputdatepicker2">วันปิดภาคเรียน : </label>
+                                </div>
+                                <div class="form-group selectContainer">
+                                    <div class="input-group date dateTime">
+                                        <input type="text" name="end_semester" id="inputdatepicker2" class="form-control" required>
+                                        <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-th"></i>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div id="semesterStatus">
+
+                                </div>
+
+                                <div class="form-group pull-right">
+                                    <button type="submit" class="btn btn-primary" id="addOpenSubjects">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> บันทึกข้อมูล
+                                    </button>
+                                </div>
+
+                            </div>
+                        </form>
+
+                        <div id="error"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-md-12 top-20">
+            <h4>
+                ปีการศึกษา :
+                <div class="btn-group" role="group">
+                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+                    <button type="button" id="showYear" class="btn btn-default"></button>
+
+                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                </div>
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+
+            <div id="toolbar">
+                <button id="remove" class="btn btn-danger" data-toggle="confirmation" disabled>
+                    <i class="glyphicon glyphicon-remove"></i> ลบข้อมูล
+                </button>
+            </div>
+            <table id="table" data-toolbar="#toolbar">
+            </table>
+        </div>
+    </div>
+
+
+</div>
+

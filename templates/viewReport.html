@@ -1,0 +1,249 @@
+<script>
+    $(document).ready(function () {
+        getCurYear();
+
+        //บอกการเข้าถึงว่าเข้าได้ระดับไหน
+        var access;
+        if(user.faculty_executive_officer >= 1 || user.faculty_admin == 1){
+            access = "ระดับคณะ";
+        }else if(user.sector_president >= 1){
+            access = "ระดับภาควิชา";
+        }else if (user.major_president >= 1 || user.major_admin == 1){
+            access = "ระดับสาขา";
+        }else if(user.course_president != null || user.course_admin >= 1){
+            access = "ระดับหลักสูตร";
+        }
+
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+" <small>สิทธิการเข้าถึง "+access+"</small></h3>");
+    });
+
+    var $table = $("#table");
+    var reportTableData;
+    var year;
+    var curYear;
+
+    //รับปีปัจจุบัน ข้อมูลปีปัจจุบัน
+    function getCurYear() {
+        $.ajax({
+            type: 'POST',
+            url: 'reportFileDAO.php',
+            data: {func: 'getCurYear'},
+            dataType: 'html',
+            success: function (response) {
+                year = response-1;
+                curYear = response;
+                $("#showYear").html(year);
+                getReportTableData();
+            }
+        });
+    }
+
+    //data ของ report table มคอ. 7 โดยข้อมูลที่ได้จะเป็นตามสิทธของ user นั้น
+    function getReportTableData() {
+        $.ajax({
+            type: 'POST',
+            url: 'viewReport.php',
+            data: {
+                func: 'getReport',
+                year: year,
+
+                user_id: user.user_id,
+                faculty_admin: user.faculty_admin,
+                major_admin: user.major_admin,
+                course_admin: user.course_admin,
+
+                faculty_executive_officer: user.faculty_executive_officer,
+                major_president: user.major_president,
+                sector_president: user.sector_president,
+                course_president: user.course_president,
+
+                faculty_id: user.faculty_id,
+                sector_id: user.sector_id,
+                major_id: user.major_id
+
+            },
+            dataType: 'json',
+            success: function (response) {
+                reportTableData = response;
+                reportTable();
+            }
+        });
+    }
+
+    //report table เอาข้อมูลมาโชว์และทำเป็น table
+    function reportTable() {
+        $table.bootstrapTable({
+            columns: [
+                {
+                    title: 'ลำดับ',
+                    formatter: function (value, row, index) {
+                        return [index+1].join('  ');
+                    },
+                    width: '1%',
+                    align: 'center'
+
+                },{
+                    field: 'sector_id',
+                    title: 'ภาควิชา',
+                    width: "25%",
+                    cellStyle:function cellStyle(value, row, index, field) {
+                        return {
+                            css: { "font-size": "16px"}
+                        };
+                    },
+                    formatter: sectorFormatter
+                },{
+                    field: 'major_id',
+                    title: 'สาขาวิชา',
+                    width: "25%",
+                    formatter: majorFormatter
+                },{
+                    field: 'course_id',
+                    title: 'หลักสูตร',
+                    width: "25%"
+                },{
+                    field: 'report_id',
+                    title: 'ไฟล์ มคอ. 7',
+                    align: 'center',
+                    width: '1%',
+
+                    formatter: reportOperateFormatter
+                }
+            ]
+        });
+        $table.bootstrapTable('load', reportTableData);
+    }
+
+    var sector;
+    var major;
+
+    //format ของภาควิชา sector ที่จะโชว์แค่อันแรก
+    function sectorFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && sector == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        sector = value;
+        return [ val].join('');
+
+    }
+
+    //format ของสาขาวิชา major ที่จะโชว์แค่อันแรก
+    function majorFormatter(value, row, index) {
+        var val;
+
+        if(index >= 1 && major == value){
+            val = "";
+        }else{
+            val = value;
+        }
+
+        major = value;
+        return [ val ].join('');
+
+    }
+
+    //upload file button ปุ่มอัพโหลดไฟล์รายงาน
+    function reportOperateFormatter(value, row, index) {
+
+        if(row["report_type"] == 0){
+            return [
+                "<a class=\"\" href=./server/php/files/" + row["report_id"] + " target=\"blank\">",
+                    '<img src="./images/pdf-icon.png" width="34" height="34">',
+//                    '<i class="glyphicon glyphicon-download-alt"></i> Download PDF',
+                '</a>'
+            ].join('');
+        }else if(row["report_type"] == 1){
+            return [
+                "<a class=\"\" href=" + row["report_id"] + " target=\"blank\">",
+                    '<img src="./images/file-link-icon.png" width="34" height="34">',
+//                    '<i class="glyphicon glyphicon-link"></i> Click the link',
+                '</a>'
+            ].join('');
+        }else{
+            return [
+                "<strong><span class='text-danger'>ยังไม่ได้ส่ง<span></strong>"
+            ].join('');
+        }
+    }
+
+    //ลดปี
+    $("#old").on('click',function () {
+        year--;
+        $("#showYear").html(year);
+        if(year < curYear){
+            $("#new").prop( "disabled", false );
+        }
+        getReportTableData();
+    });
+
+    //เพื่มปี
+    $("#new").on('click',function () {
+        year++;
+        $("#showYear").html(year);
+        if(year == curYear){
+            $("#new").prop( "disabled", true );
+        }
+        getReportTableData();
+    });
+
+    //ปีเท่าเดิม
+    $("#showYear").on('click',function () {
+        getReportTableData();
+    });
+</script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-bar-chart" aria-hidden="true"></i> สรุปการส่ง รายงานผลการดำเนินงานของหลักสูตร <small>(มคอ. 7)</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">สรุปการส่ง มคอ.</li>
+                <li class="active">มคอ. 7</li>
+            </ol>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 top-10">
+            <h4>
+                ปีการศึกษา :
+                <div class="btn-group" role="group">
+                    <button type="button" id="old" class="btn btn-default "><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+                    <button type="button" id="showYear" class="btn btn-default"></button>
+
+                    <button type="button" id="new" class="btn btn-default"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                </div>
+            </h4>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-12 col-xl-10   top-15">
+
+            <table id="table" data-id-field="year" >
+            </table>
+
+        </div>
+    </div>
+
+    <div class="top-40"></div>
+
+
+</div>

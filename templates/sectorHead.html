@@ -1,0 +1,151 @@
+<style>
+    .selectWidth {
+        width: 300px;
+    }
+
+</style>
+
+
+<script>
+    $(function () {
+        $("#showDetail").append("<h3>คณะ : "+user.faculty_id+"</h3>");
+        getSectorUser();
+    });
+
+    var sectorUser;
+    var dataSector;
+    var selectSectorUser = [];
+
+    //sector user ของคณะที่กำหนด
+    function getSectorUser() {
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getSectorUser', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                sectorUser = response;
+                getSector();
+            }
+        })
+    }
+
+    //Table ภาควิชา และ ประธานภาควิชา
+    $sector = $('#sec_pre');
+    function getSector() {
+        var i = 0;
+        $.ajax({
+            type: 'POST',
+            url: 'userDAO.php',
+            data: {func: 'getSector', val: user.faculty_id},
+            dataType: 'json',
+            success: function (response) {
+                dataSector = response;
+                $sector.bootstrapTable({
+                    columns: [{
+                        title: 'ลำดับ',
+                        width: '1%',
+                        formatter: function (value, row, index) {
+                            return [index+1].join('  ');
+                        },
+                        align: 'center'
+                    },{
+                        field: 'sector_id',
+                        title: 'ภาควิชา',
+                        width: '45%'
+                    }, {
+                        field: 'sector_president_id',
+                        title: 'หัวหน้าภาควิชา',
+                        width: '30%',
+                        editable: {
+                            type: 'select2',
+                            title: 'เลือกหัวหน้าภาควิชา',
+                            url: 'userDAO.php',
+                            name: 'sector_president_id',
+                            emptytext: 'ไม่มีหัวหน้าภาควิชา',
+                            inputclass: 'selectWidth',
+                            source: function () {
+                                if (i >= dataSector.length) {
+                                    i = 0;
+                                }
+
+                                var curSector = dataSector[i].sector_id;
+                                var curSecPre = dataSector[i].sector_president_id;
+
+                                SelectSectorUser();
+
+                                //user ของภาคนั้น
+                                function SelectSectorUser() {
+                                    selectSectorUser = [];
+                                    var checkPre = false;
+                                    $.each(sectorUser, function (j, user) {
+                                        if (curSector == user.sector_id) {
+                                            selectSectorUser.push({
+                                                'id': user.user_id,
+                                                'text': user.name + " " + user.surname
+                                            });
+
+                                            if (curSecPre == user.user_id || curSecPre == null) {
+                                                checkPre = true;
+                                            }
+                                        }
+                                    });
+
+                                    if (checkPre == false) {
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: 'userDAO.php',
+                                            data: {func: 'setNullSectorUser', pk: curSector}
+                                        });
+                                    }
+                                }
+
+
+                                i++;
+                                return selectSectorUser;
+                            },
+                            params: function func(params) {
+                                params.func = 'updateSectorUser';
+                                return params;
+                            },
+                            success: function () {
+                                getSectorUser();
+                            }
+                        }
+                    }
+                    ],
+//                    data: dataSector
+                });
+                i = 0;
+                $sector.bootstrapTable('load', dataSector);
+            }
+        });
+    }
+</script>
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1><i class="fa fa-user right-5" aria-hidden="true"></i> หัวหน้าภาควิชา <small>(ผู้ดูแลระบบของคณะ)</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li class="active">ตั้งค่าบัญชีผู้ใช้ (Admin คณะ)</li>
+                <li class="active">หัวหน้าภาควิชา</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10">
+            <div id="showDetail"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 top-20">
+            <table id="sec_pre" data-id-field="sector_id"></table>
+        </div>
+    </div>
+</div>
