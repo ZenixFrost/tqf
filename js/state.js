@@ -51,12 +51,16 @@ $(function () {
 
 
     $("#header").click(function () {
-        $('.side-nav .collapse').collapse('hide');
-        var page = {'id':"#home",'url': 'templates/home.html'};
-        sessionStorage.setItem("page", JSON.stringify(page));
-        $('ul li').removeClass("activated");
-        $("#home").addClass("activated");
-        $('#view').load("templates/home.html");
+        if(user == null){
+            $('#view').load("templates/guest.html");
+        }else{
+            $('.side-nav .collapse').collapse('hide');
+            var page = {'id':"#home",'url': 'templates/home.html'};
+            sessionStorage.setItem("page", JSON.stringify(page));
+            $('ul li').removeClass("activated");
+            $("#home").addClass("activated");
+            $('#view').load("templates/home.html");
+        }
         return false;
     });
 
