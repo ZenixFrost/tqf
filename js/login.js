@@ -76,6 +76,7 @@ function onSignIn(googleUser) {
     var id_token = googleUser.getAuthResponse().id_token;
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut();
+    // auth2.getAuthInstance().signOut();
     $("#SignIn").hide();
     $("#loading").show();
 

@@ -18,9 +18,6 @@
     <!--bootstrap-datetimepicker-->
     <link rel="stylesheet" type="text/css" href="./lib/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
 
-    <!--jasny bootstrap use for left side nav -->
-    <!--<link rel="stylesheet" type="text/css" href="./lib/jasny-bootstrap/css/jasny-bootstrap.min.css"/>-->
-
     <!--bootstrap select-->
     <link rel="stylesheet" type="text/css" href="./lib/bootstrap-select-1.10.0/dist/css/bootstrap-select.min.css"/>
 
@@ -150,8 +147,6 @@
     </style>
 
     <script>
-
-
         jQuery.fn.center = function () {
             this.css("position", "fixed");
             this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2.5) +
@@ -163,15 +158,10 @@
 
         //Ajax loading
         $(document).ready(function () {
-//            $("<img id=\"loading\" src=\"./images/default.svg\">").insertAfter("#view").center();
-//            $('#loading').loader();
             $(".kart-loader").center();
-
             $(document).ajaxStart(function () {
-//                $("#floatingBarsG").show();
                 $(".kart-loader").css('visibility', 'visible');
             }).ajaxStop(function () {
-//                $("#floatingBarsG").hide();
                 $(".kart-loader").css('visibility', 'hidden');
             });
         });
@@ -187,7 +177,6 @@
             var $reportFile = $("#reportFile");
             var $deadlineMenu = $("#deadlineMenu");
 
-
             $facultyAdmin.hide();
             $majorAdmin.hide();
             $basicSystem.hide();
@@ -195,7 +184,6 @@
             $subjectMenu.hide();
             $reportFile.hide();
             $deadlineMenu.hide();
-
 
             if(user != null) {
 
@@ -224,13 +212,11 @@
                     $reportFile.show();
                 }
 
-
             }else{
                 $("#menu").hide();
             }
 
         });
-
     </script>
 
 </head>
@@ -360,12 +346,9 @@
 
 <!--//////////////////////////////////////////////////Templates//////////////////////////////////////////////////////-->
 
-
     <div id="page-wrapper">
             <div class="container-fluid">
                 <div id="view"></div>
-
-
 <!-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
 
 

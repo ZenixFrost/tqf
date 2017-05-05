@@ -502,7 +502,7 @@
                 }
             });
 
-            if(dateSend <= deadlineDate){
+            if(dateSend <= deadlineDate || deadlineDate == null){
                 return [
                     pdfBtn(row["post_file_id"]),
                     deleteBtn("tqf_file",row["post_file_id"]),
